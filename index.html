@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TMS Pro</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 15px;
+      margin: auto;
+      max-width: 960px;
+      font-size: 17px;
+    }
+
+  judul-besar {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0 30px;
+}
+
+
+    h2, h3, label {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0 6px;
+    }
+
+    select {
+      padding: 8px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+      margin-bottom: 8px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #888;
+      margin: 4px;
+    }
+
+    .button-group {
+      margin: 4px 0;
+    }
+
+    .button-group button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      width: 100%;
+      min-width: 140px;
+    }
+
+    .button-group button.active {
+      background-color: #003f7f;
+    }
+
+    .button-group button:disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .hasil, .resume {
+      background: #f9f9f9;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .charts {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.charts canvas {
+  width: 48% !important;
+  height: auto !important;
+}
+
+    .charts canvas {
+      width: 100%;
+      max-width: 100%;
+      height: auto !important;
+    }
+  </style>
+</head>
+<body onload="initializeForm()">
+
+<style>
+  /* Container utama halaman login */
+#loginContainer {
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+}
+
+/* Flex layout antara logo dan form login */
+.login-content {
+  display: flex;
+  align-items: center;      /* Posisikan secara vertikal */
+  gap: 30px;                /* Jarak antar elemen */
+}
+
+/* Logo */
+.login-logo {
+  width: 120px;             /* Sesuaikan ukuran logo */
+  height: auto;
+  object-fit: contain;
+}
+
+/* Form login */
+.login-form {
+  flex: 1;                  /* Ambil sisa ruang */
+}
+
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #004999;
+}
+
+</style>
+
+<!-- Login Container -->
+<div id="loginContainer">
+  <!-- Wrapper dengan Flex -->
+  <div class="login-content">
+    
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="logo.png" alt="Logo" class="login-logo" />
+    </div>
+
+    <!-- Form Login -->
+    <div class="login-form">
+      <h2>Login</h2>
+
+      <label for="username">Username:</label><br />
+      <input type="text" id="username" /><br /><br />
+
+      <label for="password">Password:</label><br />
+      <input type="password" id="password" /><br /><br />
+
+      <button onclick="checkLogin()">Login</button>
+      <p id="loginError" style="color: red;"></p>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+function checkLogin() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  if (user === 'Insoper_UT' && pass === 'dediKASI') {
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+  } else {
+    document.getElementById('loginError').innerText = 'Username atau password salah';
+  }
+}
+</script>
+
+<div id="mainApp" style="display:none;">
+
+<h1 class="judul-besar">TMS Pro</h1>
+
+
+<label>Type Alat:</label>
+<select id="typeAlat">
+  <option value="">-- Pilih Type Alat --</option>
+  <option value="PC1250-8">PC1250-8</option>
+  <option value="PC1250-11R">PC1250-11R</option>
+  <option value="PC2000-8">PC2000-8</option>
+  <option value="PC2000-11R">PC2000-11R</option>
+  <option value="PC3400-11M0">PC3400-11M0</option>
+</select>
+
+<label>Kapasitas Bucket (m³):</label>
+<select id="kapasitasBucket">
+  <option value="">-- Pilih Kapasitas --</option>
+</select>
+
+<label>Metode Loading:</label>
+<select id="metodeLoading">
+  <option value="">-- Pilih Metode --</option>
+  <option>Top Loading</option>
+  <option>Bench Loading</option>
+  <option>Double Bench Loading</option>
+</select>
+
+<button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
+
+<div id="truckCounterContainer" style="margin: 10px 0; display: none;">
+  <label><strong>Truck Counter:</strong></label><br>
+  <button onclick="updateTruckCount(-1)" id="btnMinus" disabled>-</button>
+  <span id="truckCount" style="margin: 0 10px;">0</span>
+  <button onclick="updateTruckCount(1)" id="btnPlus" disabled>+</button>
+</div>
+
+
+<h3>Bucket Fill Factor:</h3>
+<div class="button-group grid-2col" id="fillFactors">
+  <button onclick="setFill(this, 0.7)" disabled>0.7</button>
+  <button onclick="setFill(this, 0.8)" disabled>0.8</button>
+  <button onclick="setFill(this, 0.9)" disabled>0.9</button>
+  <button onclick="setFill(this, 1.0)" class="active" disabled>1.0</button>
+  <button onclick="setFill(this, 1.1)" disabled>1.1</button>
+  <button onclick="setFill(this, 1.2)" disabled>1.2</button>
+</div>
+
+<h3>Primary Work:</h3>
+<div class="button-group grid-2col" id="primaryButtons">
+  <button onclick="addStep(this, 'Primary Work', 'Dig to Load')" disabled>Dig to Load</button>
+  <button onclick="addStep(this, 'Primary Work', 'Swing Loaded')" disabled>Swing Loaded</button>
+  <button onclick="addStep(this, 'Primary Work', 'Dump')" disabled>Dump</button>
+  <button onclick="addStep(this, 'Primary Work', 'Swing Empty')" disabled>Swing Empty</button>
+</div>
+
+<h3>Secondary Work:</h3>
+<div class="button-group grid-2col" id="secondaryButtons">
+  <button onclick="addStep(this, 'Secondary Work', 'Dig to Prepare')" disabled>Dig to Prepare</button>
+  <button onclick="addStep(this, 'Secondary Work', 'Wait to Dump')" disabled>Wait to Dump</button>
+  <button onclick="addStep(this, 'Secondary Work', 'Idle')" disabled>Idle</button>
+  <button onclick="addStep(this, 'Secondary Work', 'Cleaning')" disabled>Cleaning</button>
+  <button onclick="addStep(this, 'Secondary Work', 'Positioning')" disabled>Positioning</button>
+  <button onclick="addStep(this, 'Secondary Work', 'Others')" disabled>Others</button>
+</div>
+
+
+<button id="btnSelesai" onclick="selesaiSession()" disabled>✅ Selesai</button>
+<button id="btnSummary" onclick="hitungProduksi()" disabled>📊 Summary</button>
+<button id="btnExportPDF" onclick="exportPDF()" disabled>🧾 Export ke PDF</button>
+<button id="btnExportExcel" onclick="exportExcel()" disabled>📄 Export ke Excel</button>
+
+
+
+<div class="hasil" id="output"></div>
+<div class="resume" id="resume"></div>
+<div class="charts">
+  <canvas id="pieChart"></canvas>
+  <canvas id="barChart"></canvas>
+</div>
+
+<script>
+let logs = [], currentFill = 1.0, started = false, lastTime = null, lastLabel = null;
+let truckCount = 0;
+
+function initializeForm() {
+  document.getElementById("typeAlat").addEventListener("change", function () {
+    const type = this.value;
+    const bucketSelect = document.getElementById("kapasitasBucket");
+    bucketSelect.innerHTML = '<option value="">-- Pilih Kapasitas --</option>';
+
+    let options = [];
+
+    if (type === "PC1250-8" || type === "PC1250-11R") {
+      options = [6.7, 7.5];
+    } else if (type === "PC2000-8" || type === "PC2000-11R") {
+      options = [12, 14];
+    } else if (type === "PC3400-11M0") {
+      options = [18, 19.7];
+    } else {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "-- Isi Manual --";
+      bucketSelect.appendChild(opt);
+      return;
+    }
+
+    options.forEach(val => {
+      const opt = document.createElement("option");
+      opt.value = val;
+      opt.textContent = val.toString().replace(".", ",");
+      bucketSelect.appendChild(opt);
+    });
+  });
+
+  ['typeAlat', 'kapasitasBucket', 'metodeLoading'].forEach(id => {
+    document.getElementById(id).addEventListener('change', cekForm);
+  });
+  cekForm();
+}
+
+function cekForm() {
+  const filled = document.getElementById('typeAlat').value &&
+                 document.getElementById('kapasitasBucket').value &&
+                 document.getElementById('metodeLoading').value;
+  document.getElementById('btnStart').disabled = !filled;
+}
+
+function setFill(btn, val) {
+  if (!started) return;
+  currentFill = val;
+  document.querySelectorAll('#fillFactors button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function startSession() {
+  started = true;
+  lastTime = null;
+  lastLabel = null;
+  logs = [];
+  truckCount = 0;
+  document.getElementById('truckCount').innerText = truckCount;
+
+  document.querySelectorAll('button').forEach(btn => {
+    if (btn.id !== 'btnStart') btn.disabled = false;
+  });
+
+  document.getElementById('btnStart').disabled = true;
+
+  // Aktifkan counter
+  document.getElementById('truckCounterContainer').style.display = 'block';
+  document.getElementById('btnPlus').disabled = false;
+  document.getElementById('btnMinus').disabled = false;
+}
+
+
+function addStep(btn, category, item) {
+  if (!started) return;
+  const now = Date.now();
+  if (lastTime !== null) {
+    const durasi = (now - lastTime) / 1000;
+    logs.push({ category: lastLabel.category, item: lastLabel.item, durasi, fillFactor: currentFill });
+  }
+  lastTime = now;
+  lastLabel = { category, item };
+
+  // Tandai tombol aktif
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Aktifkan fill factor hanya jika Dig to Load atau Swing Loaded
+  const fillButtons = document.querySelectorAll('#fillFactors button');
+  if (item === 'Dig to Load' || item === 'Swing Loaded') {
+    fillButtons.forEach(b => b.disabled = false);
+  } else {
+    fillButtons.forEach(b => b.disabled = true);
+  }
+}
+
+function selesaiSession() {
+  if (!started || lastTime === null || lastLabel === null) return;
+  const now = Date.now();
+  const durasi = (now - lastTime) / 1000;
+  logs.push({ category: lastLabel.category, item: lastLabel.item, durasi, fillFactor: currentFill });
+
+  started = false;
+  lastTime = null;
+  lastLabel = null;
+
+  document.querySelectorAll('button').forEach(b => b.disabled = true);
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnSummary').disabled = false;
+    // Nonaktifkan counter
+  document.getElementById('btnPlus').disabled = true;
+  document.getElementById('btnMinus').disabled = true;
+  document.getElementById('truckCounterContainer').style.display = 'none';
+
+}
+
+function updateTruckCount(delta) {
+  if (!started) return;
+  truckCount += delta;
+  if (truckCount < 0) truckCount = 0;
+  document.getElementById('truckCount').innerText = truckCount;
+}
+
+
+function hitungProduksi() {
+  const typeAlat = document.getElementById("typeAlat").value;
+  const kapasitas = document.getElementById("kapasitasBucket").value;
+  const metode = document.getElementById("metodeLoading").value;
+
+  const bucket = parseFloat(kapasitas) || 1;
+  const primary = logs.filter(l => l.category === 'Primary Work');
+  const secondary = logs.filter(l => l.category === 'Secondary Work');
+  const totalPrimary = primary.reduce((a,b) => a + b.durasi, 0);
+  const totalSecondary = secondary.reduce((a,b) => a + b.durasi, 0);
+  const dumpCount = primary.filter(l => l.item.toLowerCase().includes("dump")).length;
+  const avgCycleTime = dumpCount > 0 ? totalPrimary / dumpCount : 0;
+  const efficiency = totalPrimary / (totalPrimary + totalSecondary);
+  const avgFill = logs.reduce((a,b)=>a+b.fillFactor,0) / logs.length;
+  const produksi = (bucket * avgFill * 3600 * efficiency) / (avgCycleTime || 1);
+
+  const digToLoad = primary.filter(l => l.item === "Dig to Load");
+  const swingLoaded = primary.filter(l => l.item === "Swing Loaded");
+  const swingEmpty = primary.filter(l => l.item === "Swing Empty");
+  const dump = primary.filter(l => l.item === "Dump");
+
+  const avg = arr => arr.length > 0 ? arr.reduce((a,b)=>a+b.durasi,0)/arr.length : 0;
+  const suggestions = [];
+  if (efficiency < 0.85) suggestions.push("⚠️ Primary work < 85%. Tingkatkan efisiensi penggalian, kurangi secondary time.");
+  if (avg(digToLoad) > 14) suggestions.push("⚠️ Dig to Load > 12 detik. Optimalkan kinerja digging, sesuaikan sudut bucket dan sudut arm saat penggalian.");
+  if (avg(swingLoaded) > 6 || avg(swingEmpty) > 6) suggestions.push("⚠️ Swing > 6 detik. Perkecil sudut swing.");
+  if (avg(dump) > 6) suggestions.push("⚠️ Dump > 6 detik. Perbaiki posisi dump truck atau ketinggian bench.");
+
+  document.getElementById("output").innerHTML = `
+    <p><strong>Type Alat:</strong> ${typeAlat}</p>
+    <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
+    <p><strong>Metode Loading:</strong> ${metode}</p>      
+    <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
+
+    <hr>
+    <p><strong>Total Primary:</strong> ${totalPrimary.toFixed(2)} detik</p>
+    <p><strong>Total Secondary:</strong> ${totalSecondary.toFixed(2)} detik</p>
+    <p><strong>Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
+    <p><strong>Cycle Time Rata-rata:</strong> ${avgCycleTime.toFixed(2)} detik</p>
+    <p><strong>Produksi:</strong> ${produksi.toFixed(2)} m³/jam</p>
+  `;
+
+  document.getElementById("btnExportPDF").disabled = false;
+  document.getElementById("btnExportExcel").disabled = false;
+  document.getElementById("resume").innerHTML = `
+    <h3>Resume Pengoperasian:</h3>
+    <ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>
+    <h3>Summary Langkah:</h3>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Durasi (s)</th><th>Bucket Fill Factor</th></tr>
+      </thead>
+      <tbody>
+        ${logs.map(l => `<tr><td>${l.category}</td><td>${l.item}</td><td>${l.durasi.toFixed(2)}</td><td>${l.fillFactor}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+
+  new Chart(document.getElementById("pieChart"), {
+    type: 'pie',
+    data: {
+      labels: ["Primary Work", "Secondary Work"],
+      datasets: [{
+        data: [totalPrimary, totalSecondary],
+        backgroundColor: ["#007bff", "#ffc107"]
+      }]
+    }
+  });
+
+  const primaryItems = [...new Set(primary.map(p => p.item))];
+  const avgDurasi = primaryItems.map(item => {
+    const steps = primary.filter(p => p.item === item);
+    return steps.reduce((a,b)=>a+b.durasi,0)/steps.length;
+  });
+
+
+  new Chart(document.getElementById("barChart"), {
+    type: 'bar',
+    data: {
+      labels: primaryItems,
+      datasets: [{
+        label: "Rata-rata Durasi (detik)",
+        data: avgDurasi,
+        backgroundColor: "#28a745"
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+}
+</script>
+
+
+
+<!-- Tambahkan ini di bagian <head> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
+<script>
+async function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 40;
+  let y = margin;
+
+  pdf.setFontSize(16);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Laporan Produktivitas Excavator", pageWidth / 2, y, { align: "center" });
+  y += 24;
+
+  const output = document.getElementById("output").innerText.trim().split("\n");
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "normal");
+  output.forEach(line => {
+    pdf.text(line, margin, y);
+    y += 14;
+  });
+
+  y += 10;
+
+  const pieCanvas = document.getElementById("pieChart");
+  const barCanvas = document.getElementById("barChart");
+
+  const chartContainer = document.createElement('div');
+  chartContainer.style.position = "fixed";
+  chartContainer.style.top = "-9999px";
+  chartContainer.style.left = "-9999px";
+  chartContainer.style.width = "800px";
+  chartContainer.style.padding = "20px";
+  chartContainer.style.background = "white";
+  chartContainer.style.display = "flex";
+  chartContainer.style.flexWrap = "wrap";
+  chartContainer.style.justifyContent = "space-between";
+  chartContainer.style.gap = "20px";
+  chartContainer.style.zIndex = "-1";
+
+  const pieImgEl = document.createElement("img");
+  pieImgEl.src = pieCanvas.toDataURL("image/png");
+  pieImgEl.style.width = "48%";
+
+  const barImgEl = document.createElement("img");
+  barImgEl.src = barCanvas.toDataURL("image/png");
+  barImgEl.style.width = "48%";
+
+  chartContainer.appendChild(pieImgEl);
+  chartContainer.appendChild(barImgEl);
+  document.body.appendChild(chartContainer);
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  const canvasChart = await html2canvas(chartContainer, {
+    scale: 2,
+    scrollY: 0,
+    windowWidth: chartContainer.scrollWidth,
+    useCORS: true
+  });
+
+  const chartImg = canvasChart.toDataURL("image/png");
+  const chartImgHeight = (canvasChart.height * (pageWidth - 2 * margin)) / canvasChart.width;
+
+  if (y + chartImgHeight > pageHeight - margin) {
+    pdf.addPage();
+    y = margin;
+  }
+
+  pdf.addImage(chartImg, "PNG", margin, y, pageWidth - 2 * margin, chartImgHeight);
+  y += chartImgHeight + 20;
+
+  chartContainer.remove();
+
+  const suggestions = document.querySelectorAll("#resume ul li");
+  if (suggestions.length > 0) {
+    if (y + (suggestions.length * 14) > pageHeight - margin) {
+      pdf.addPage();
+      y = margin;
+    }
+    pdf.setFont("helvetica", "bold");
+    pdf.text("Saran:", margin, y);
+    y += 14;
+    pdf.setFont("helvetica", "normal");
+    suggestions.forEach(li => {
+      pdf.text(`• ${li.innerText}`, margin + 10, y);
+      y += 14;
+    });
+  }
+
+  const table = document.querySelector("#resume table");
+  if (table) {
+    pdf.addPage();
+    pdf.autoTable({
+      startY: margin,
+      html: table,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 123, 255] }
+    });
+  }
+
+  pdf.save("laporan_excavator.pdf");
+}
+</script>
+
+<script>
+function exportExcel() {
+  const table = document.querySelector("#resume table");
+  if (!table) return alert("Tidak ada data untuk diekspor.");
+
+  const output = document.getElementById("output").innerText.trim().split("\n");
+
+  // Ambil data ringkasan
+  const ringkasan = output.map(line => {
+    const idx = line.indexOf(":");
+    if (idx === -1) return [line.trim(), ""];
+    const key = line.substring(0, idx).trim();
+    const value = line.substring(idx + 1).trim();
+    return [key, value];
+  });
+
+  // Ambil data langkah operasi
+  const rows = Array.from(table.rows).map(row =>
+    Array.from(row.cells).map(cell => cell.innerText)
+  );
+
+  // Gabungkan semua data
+  const allData = [
+    ["RINGKASAN PRODUKTIVITAS", ""], // Baris A1
+    ...ringkasan,                    // A2 dst
+    [],                              // baris kosong pemisah
+    ["DETAIL LANGKAH OPERASI"],
+    ...rows
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(allData);
+
+  // Gabungkan cell A1:B1
+  ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+
+  XLSX.writeFile(wb, "laporan_excavator.xlsx");
+}
+</script>
+
+
+</div>
+</body>
+</html>

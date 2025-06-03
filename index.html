@@ -9,6 +9,35 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+  .fill-factor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 10px;
+  row-gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.fill-factor-grid button {
+  background-color: #e0f0ff;
+  color: #004b7f;
+  border: 1px solid #007bff;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 12px 0;
+  transition: background-color 0.2s ease;
+}
+
+.fill-factor-grid button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.fill-factor-grid button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
     body {
       font-family: Arial, sans-serif;
       padding: 15px;
@@ -244,16 +273,34 @@ function checkLogin() {
 
 <button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
 
-<div id="truckCounterContainer" style="margin: 10px 0; display: none;">
-  <label><strong>Truck Counter:</strong></label><br>
-  <button onclick="updateTruckCount(-1)" id="btnMinus" disabled>-</button>
-  <span id="truckCount" style="margin: 0 10px;">0</span>
-  <button onclick="updateTruckCount(1)" id="btnPlus" disabled>+</button>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 10px 0;">
+  <div id="truckCounterContainer" style="display: block;">
+    <label><strong>Truck Counter:</strong></label><br>
+    <button onclick="updateTruckCount(-1)" id="btnMinus" disabled>-</button>
+    <span id="truckCount" style="margin: 0 10px;">0</span>
+    <button onclick="updateTruckCount(1)" id="btnPlus" disabled>+</button>
+  </div>
+
+  <div id="stepTimer" style="
+    display: none;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px 16px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: #f0f8ff;
+    min-width: 140px;
+    text-align: right;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  ">
+    ⏱️ <span id="stepTimerValue">0.0</span> detik
+  </div>
 </div>
 
 
+
 <h3>Bucket Fill Factor:</h3>
-<div class="button-group grid-2col" id="fillFactors">
+<div class="fill-factor-grid" id="fillFactors">
   <button onclick="setFill(this, 0.7)" disabled>0.7</button>
   <button onclick="setFill(this, 0.8)" disabled>0.8</button>
   <button onclick="setFill(this, 0.9)" disabled>0.9</button>
@@ -262,13 +309,15 @@ function checkLogin() {
   <button onclick="setFill(this, 1.2)" disabled>1.2</button>
 </div>
 
+
 <h3>Primary Work:</h3>
 <div class="button-group grid-2col" id="primaryButtons">
   <button onclick="addStep(this, 'Primary Work', 'Dig to Load')" disabled>Dig to Load</button>
   <button onclick="addStep(this, 'Primary Work', 'Swing Loaded')" disabled>Swing Loaded</button>
-  <button onclick="addStep(this, 'Primary Work', 'Dump')" disabled>Dump</button>
   <button onclick="addStep(this, 'Primary Work', 'Swing Empty')" disabled>Swing Empty</button>
+  <button onclick="addStep(this, 'Primary Work', 'Dump')" disabled>Dump</button>
 </div>
+
 
 <h3>Secondary Work:</h3>
 <div class="button-group grid-2col" id="secondaryButtons">
@@ -297,6 +346,8 @@ function checkLogin() {
 
 <script>
 let logs = [], currentFill = 1.0, started = false, lastTime = null, lastLabel = null;
+let stepTimerInterval = null;
+let stepStartTime = null;
 let truckCount = 0;
 
 function initializeForm() {
@@ -379,6 +430,7 @@ function addStep(btn, category, item) {
   }
   lastTime = now;
   lastLabel = { category, item };
+  resetStepTimer();
 
   // Tandai tombol aktif
   document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.classList.remove('active'));
@@ -410,6 +462,9 @@ function selesaiSession() {
   document.getElementById('btnPlus').disabled = true;
   document.getElementById('btnMinus').disabled = true;
   document.getElementById('truckCounterContainer').style.display = 'none';
+  clearInterval(stepTimerInterval);
+  document.getElementById('stepTimer').style.display = 'none';
+
 
 }
 
@@ -418,6 +473,18 @@ function updateTruckCount(delta) {
   truckCount += delta;
   if (truckCount < 0) truckCount = 0;
   document.getElementById('truckCount').innerText = truckCount;
+}
+
+function resetStepTimer() {
+  clearInterval(stepTimerInterval);
+  stepStartTime = Date.now();
+  document.getElementById('stepTimer').style.display = 'block';
+
+  stepTimerInterval = setInterval(() => {
+    const now = Date.now();
+    const elapsed = ((now - stepStartTime) / 1000).toFixed(1);
+    document.getElementById('stepTimerValue').innerText = elapsed;
+  }, 100);
 }
 
 

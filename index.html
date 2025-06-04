@@ -805,11 +805,11 @@ barChartCanvas.chart = window.barChart;
 <script>
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
-  await new Promise(resolve => setTimeout(resolve, 500)); // Tunggu chart muncul
+  await new Promise(resolve => setTimeout(resolve, 500));
   const pdf = new jsPDF('p', 'pt', 'a4');
+  const margin = 50;
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 40;
   let y = margin;
 
   pdf.setFontSize(16);
@@ -877,21 +877,46 @@ async function exportPDF() {
 
   chartContainer.remove();
 
-  const suggestions = document.querySelectorAll("#resume ul li");
-  if (suggestions.length > 0) {
-    if (y + (suggestions.length * 14) > pageHeight - margin) {
-      pdf.addPage();
-      y = margin;
-    }
-    pdf.setFont("helvetica", "bold");
-    pdf.text("Saran:", margin, y);
-    y += 14;
-    pdf.setFont("helvetica", "normal");
-    suggestions.forEach(li => {
-      pdf.text(`• ${li.innerText}`, margin + 10, y);
-      y += 14;
-    });
+  // Tambahkan Saran
+const resumeHTML = document.getElementById("resume").innerHTML;
+const parser = new DOMParser();
+const doc = parser.parseFromString(resumeHTML, "text/html");
+const lis = doc.querySelectorAll("ul li");
+
+if (lis.length > 0) {
+  if (y + 20 > pageHeight - margin) {
+    pdf.addPage();
+    y = margin;
   }
+
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(12);
+  pdf.text("Saran:", margin, y);
+  y += 18;
+
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(10);
+
+  lis.forEach(li => {
+    let bulletText = li.textContent.trim();
+
+    // Hilangkan karakter aneh (pastikan teks bersih)
+    bulletText = bulletText.replace(/[^a-zA-Z0-9\s.,%<>=:/()-]/g, "");
+
+    const safeWidth = pageWidth - 2 * margin - 10;
+    const wrapped = pdf.splitTextToSize("• " + bulletText, safeWidth);
+
+    wrapped.forEach(line => {
+      if (y > pageHeight - margin - 12) {
+        pdf.addPage();
+        y = margin;
+      }
+      pdf.text(line, margin + 10, y);
+      y += 12;
+    });
+  });
+}
+
 
   const table = document.querySelector("#resume table");
   if (table) {

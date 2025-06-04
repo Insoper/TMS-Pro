@@ -8,11 +8,11 @@ const urlsToCache = [
   '/icon-192.png',
   '/icon-512.png',
   '/sw.js',
-  'https://cdn.jsdelivr.net/npm/chart.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+'/chart.js',
+'/html2canvas.min.js',
+'/jspdf.umd.min.js',
+'/jspdf.plugin.autotable.min.js',
+'/xlsx.full.min.js',
 ];
 
 // Install SW dan simpan file ke cache

@@ -963,5 +963,19 @@ if ('serviceWorker' in navigator) {
 
 
 </div>
+<!-- Petunjuk Install untuk iOS -->
+<div id="iosInstallPrompt" style="display: none; padding: 15px; background: #fef7d1; border: 1px solid #e6c200; font-size: 16px; margin-top: 20px; border-radius: 8px;">
+  📱 Untuk menginstal aplikasi ini di iPhone, tap tombol <strong>Bagikan</strong> (ikon ⬆️ di bawah), lalu pilih <strong>Tambahkan ke Layar Utama</strong>.
+</div>
+
+<script>
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+  const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+
+  if (isIOS && !isInStandaloneMode) {
+    document.getElementById('iosInstallPrompt').style.display = 'block';
+  }
+</script>
+
 </body>
 </html>

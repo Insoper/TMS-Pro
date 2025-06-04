@@ -851,7 +851,7 @@ async function exportPDF() {
   chartContainer.appendChild(barImgEl);
   document.body.appendChild(chartContainer);
 
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 1500));
 
   const canvasChart = await html2canvas(chartContainer, {
     scale: 2,
@@ -921,9 +921,13 @@ function exportExcel() {
   });
 
   // Ambil data langkah operasi
-  const rows = Array.from(table.rows).map(row =>
-    Array.from(row.cells).map(cell => cell.innerText)
-  );
+ const rows = Array.from(table.rows).map((row, i) =>
+  Array.from(row.cells).map((cell, j) => {
+    const text = cell.innerText.trim().replace(",", ".");
+    return i === 0 || isNaN(text) ? cell.innerText : parseFloat(text);
+  })
+);
+
 
   // Gabungkan semua data
   const allData = [

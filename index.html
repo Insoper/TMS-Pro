@@ -556,11 +556,34 @@ function togglePause() {
   document.getElementById("btnPause").innerText = paused ? "▶️ Resume" : "⏸️ Pause";
   document.getElementById("btnCorrection").disabled = !paused;
 
+  // Ambil semua tombol yang harus dikontrol
+  const primaryButtons = document.querySelectorAll('#primaryButtons button');
+  const secondaryButtons = document.querySelectorAll('#secondaryButtons button');
+  const fillFactorButtons = document.querySelectorAll('#fillFactors button');
+
   if (paused) {
+    // Nonaktifkan semua tombol kerja
+    primaryButtons.forEach(btn => btn.disabled = true);
+    secondaryButtons.forEach(btn => btn.disabled = true);
+    fillFactorButtons.forEach(btn => btn.disabled = true);
+
+    // Matikan timer
     clearInterval(stepTimerInterval);
-    document.getElementById("stepTimer").style.display = "none";
+    document.getElementById('stepTimer').style.display = 'none';
   } else {
-    if (lastTime !== null) resetStepTimer(); // lanjutkan timer jika masih aktif
+    // Aktifkan ulang tombol kerja (jika session sedang berjalan)
+    if (started) {
+      primaryButtons.forEach(btn => btn.disabled = false);
+      secondaryButtons.forEach(btn => btn.disabled = false);
+
+      // Aktifkan fill factor jika item sebelumnya adalah Dig to Load atau Swing Loaded
+      if (lastLabel && (lastLabel.item === "Dig to Load" || lastLabel.item === "Swing Loaded")) {
+        fillFactorButtons.forEach(btn => btn.disabled = false);
+      }
+    }
+
+    // Lanjutkan timer
+    if (lastTime !== null) resetStepTimer();
   }
 }
 

@@ -706,19 +706,25 @@ function hitungProduksi() {
   if (avg(swingLoaded) > 6 || avg(swingEmpty) > 6) suggestions.push("⚠️ Swing > 6 detik. Perkecil sudut swing.");
   if (avg(dump) > 6) suggestions.push("⚠️ Dump > 6 detik. Perbaiki posisi dump truck atau ketinggian bench.");
 
-  document.getElementById("output").innerHTML = `
-    <p><strong>Type Alat:</strong> ${typeAlat}</p>
-    <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
-    <p><strong>Metode Loading:</strong> ${metode}</p>      
-    <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
+document.getElementById("output").innerHTML = `
+  <p><strong>Type Alat:</strong> ${typeAlat}</p>
+  <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
+  <p><strong>Metode Loading:</strong> ${metode}</p>      
+  <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
 
-    <hr>
-    <p><strong>Total Primary:</strong> ${totalPrimary.toFixed(2)} detik</p>
-    <p><strong>Total Secondary:</strong> ${totalSecondary.toFixed(2)} detik</p>
-    <p><strong>Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
-    <p><strong>Cycle Time Rata-rata:</strong> ${avgCycleTime.toFixed(2)} detik</p>
-    <p><strong>Produksi:</strong> ${produksi.toFixed(2)} m³/jam</p>
-  `;
+  <hr>
+
+  <p><strong>Total Cycle Time:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
+  <p><strong>Average Cycle Time:</strong> ${avgCycleTime.toFixed(2)} s</p>
+  <p><strong>Primary Times:</strong> ${totalPrimary.toFixed(2)} s</p>
+  <p><strong>Average Primary Times:</strong> ${(totalPrimary / (primary.length || 1)).toFixed(2)} s</p>
+  <p><strong>Secondary Times:</strong> ${totalSecondary.toFixed(2)} s</p>
+  <p><strong>Average Secondary Times:</strong> ${(totalSecondary / (secondary.length || 1)).toFixed(2)} s</p>
+  <p><strong>Work Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
+  <p><strong>Average Bucket Fill Factor:</strong> ${avgFill.toFixed(2)}</p>
+  <p><strong>Total Bucket Pass (Dump Count):</strong> ${dumpCount}</p>
+  <p><strong>Productivity:</strong> ${produksi.toFixed(2)} m³/jam</p>
+`;
 
   document.getElementById("btnExportPDF").disabled = false;
   document.getElementById("btnExportExcel").disabled = false;

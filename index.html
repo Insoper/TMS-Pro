@@ -747,19 +747,19 @@ document.getElementById("output").innerHTML = `
     </table>
   `;
 
-  // Bersihkan chart sebelumnya jika ada
-if (window.pieChart) window.pieChart.destroy();
-if (window.barChart) window.barChart.destroy();
-new Chart(document.getElementById("pieChart"), {
-    type: 'pie',
-    data: {
-      labels: ["Primary Work", "Secondary Work"],
-      datasets: [{
-        data: [totalPrimary, totalSecondary],
-        backgroundColor: ["#007bff", "#ffc107"]
-      }]
-    }
-  });
+
+const pieChartCanvas = document.getElementById("pieChart");
+window.pieChart = new Chart(pieChartCanvas, {
+  type: 'pie',
+  data: {
+    labels: ["Primary Work", "Secondary Work"],
+    datasets: [{
+      data: [totalPrimary, totalSecondary],
+      backgroundColor: ["#007bff", "#ffc107"]
+    }]
+  }
+});
+pieChartCanvas.chart = window.pieChart;
 
   const primaryItems = [...new Set(primary.map(p => p.item))];
   const avgDurasi = primaryItems.map(item => {
@@ -768,22 +768,25 @@ new Chart(document.getElementById("pieChart"), {
   });
 
 
-  new Chart(document.getElementById("barChart"), {
-    type: 'bar',
-    data: {
-      labels: primaryItems,
-      datasets: [{
-        label: "Rata-rata Durasi (detik)",
-        data: avgDurasi,
-        backgroundColor: "#28a745"
-      }]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true }
-      }
+ const barChartCanvas = document.getElementById("barChart");
+window.barChart = new Chart(barChartCanvas, {
+  type: 'bar',
+  data: {
+    labels: primaryItems,
+    datasets: [{
+      label: "Rata-rata Durasi (detik)",
+      data: avgDurasi,
+      backgroundColor: "#28a745"
+    }]
+  },
+  options: {
+    scales: {
+      y: { beginAtZero: true }
     }
-  });
+  }
+});
+barChartCanvas.chart = window.barChart;
+
 
 }
 </script>
@@ -802,6 +805,7 @@ new Chart(document.getElementById("pieChart"), {
 <script>
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
+  await new Promise(resolve => setTimeout(resolve, 500)); // Tunggu chart muncul
   const pdf = new jsPDF('p', 'pt', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();

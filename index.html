@@ -617,15 +617,19 @@ function togglePause() {
   const fillFactorButtons = document.querySelectorAll('#fillFactors button');
 
   if (paused) {
-    // Nonaktifkan semua tombol kerja
-    primaryButtons.forEach(btn => btn.disabled = true);
-    secondaryButtons.forEach(btn => btn.disabled = true);
-    fillFactorButtons.forEach(btn => btn.disabled = true);
+  // Nonaktifkan semua tombol kerja, kecuali tombol Selesai
+  primaryButtons.forEach(btn => btn.disabled = true);
+  secondaryButtons.forEach(btn => btn.disabled = true);
+  fillFactorButtons.forEach(btn => btn.disabled = true);
 
-    // Matikan timer
-    clearInterval(stepTimerInterval);
-    document.getElementById('stepTimer').style.display = 'none';
-  } else {
+  // Pastikan tombol Selesai tetap aktif saat pause
+  document.getElementById('btnSelesai').disabled = false;
+
+  // Matikan timer
+  clearInterval(stepTimerInterval);
+  document.getElementById('stepTimer').style.display = 'none';
+}
+ else {
     // Aktifkan ulang tombol kerja (jika session sedang berjalan)
     if (started) {
       primaryButtons.forEach(btn => btn.disabled = false);
@@ -654,6 +658,20 @@ function applyCorrection() {
   // Reset label dan waktu terakhir
   lastLabel = null;
   lastTime = null;
+
+// Update label dan waktu terakhir jika masih ada langkah tersisa
+if (logs.length > 0) {
+  const last = logs[logs.length - 1];
+  lastLabel = { category: last.category, item: last.item };
+  lastTime = Date.now(); // mulai ulang timer dari sekarang
+  resetStepTimer();
+} else {
+  lastLabel = null;
+  lastTime = null;
+  clearInterval(stepTimerInterval);
+  document.getElementById('stepTimer').style.display = 'none';
+}
+
 
   alert(`Langkah "${removed.item}" telah dihapus (${correctionIndex} kali)`);
 }

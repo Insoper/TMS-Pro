@@ -518,19 +518,74 @@ function selesaiSession() {
   document.querySelectorAll('button').forEach(b => b.disabled = true);
   document.getElementById('btnStart').disabled = false;
   document.getElementById('btnSummary').disabled = false;
-    // Nonaktifkan counter
+
+  // Nonaktifkan counter dan timer
   document.getElementById('btnPlus').disabled = true;
   document.getElementById('btnMinus').disabled = true;
   document.getElementById('truckCounterContainer').style.display = 'none';
   clearInterval(stepTimerInterval);
   document.getElementById('stepTimer').style.display = 'none';
+
+  // Nonaktifkan tombol pause dan correction
   paused = false;
   document.getElementById("btnPause").disabled = true;
-  document.getElementById("btnCorrection").disabled = true;
   document.getElementById("btnPause").innerText = "⏸️ Pause";
+  document.getElementById("btnCorrection").disabled = true;
 
-
+  const btnStart = document.getElementById('btnStart');
+btnStart.innerText = "🔄 Reset";
+btnStart.onclick = resetSession;
 }
+
+function resetSession() {
+  // Reset variabel
+  logs = [];
+  currentFill = 1.0;
+  started = false;
+  lastTime = null;
+  lastLabel = null;
+  truckCount = 0;
+  correctionIndex = 0;
+
+  // Kosongkan tampilan
+  document.getElementById('output').innerHTML = '';
+  document.getElementById('resume').innerHTML = '';
+
+  // Reset grafik (hapus canvas dan buat ulang kosong)
+  const pieChartCanvas = document.getElementById("pieChart");
+  const barChartCanvas = document.getElementById("barChart");
+  if (pieChartCanvas && pieChartCanvas.chart) pieChartCanvas.chart.destroy();
+  if (barChartCanvas && barChartCanvas.chart) barChartCanvas.chart.destroy();
+
+  // Reset form isian
+  document.getElementById('typeAlat').value = "";
+  document.getElementById('kapasitasBucket').innerHTML = '<option value="">-- Pilih Kapasitas --</option>';
+  document.getElementById('metodeLoading').value = "";
+
+  // Reset tombol mulai
+  const btnStart = document.getElementById('btnStart');
+  btnStart.innerText = "▶️ Mulai";
+  btnStart.onclick = startSession;
+  btnStart.disabled = true;
+
+  // Reset timer
+  document.getElementById('stepTimerValue').innerText = "0.0";
+  document.getElementById('stepTimer').style.display = "none";
+
+  // Nonaktifkan export
+  document.getElementById("btnExportPDF").disabled = true;
+  document.getElementById("btnExportExcel").disabled = true;
+
+  // Nonaktifkan fill factor active
+  document.querySelectorAll('#fillFactors button').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.innerText === "1.0") btn.classList.add('active');
+  });
+
+  // Cek form lagi agar tombol mulai hanya aktif kalau input terisi
+  cekForm();
+}
+
 
 function updateTruckCount(delta) {
   if (!started) return;
@@ -590,11 +645,19 @@ function togglePause() {
 function applyCorrection() {
   if (!paused || logs.length === 0) return;
 
-  const removed = logs.pop(); // hapus item terakhir
+  const removed = logs.pop(); // hapus langkah terakhir
   correctionIndex++;
+
+  // Hapus class 'active' dari semua tombol langkah kerja
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.classList.remove('active'));
+
+  // Reset label dan waktu terakhir
+  lastLabel = null;
+  lastTime = null;
 
   alert(`Langkah "${removed.item}" telah dihapus (${correctionIndex} kali)`);
 }
+
 
 
 function hitungProduksi() {

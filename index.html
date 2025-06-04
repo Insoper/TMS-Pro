@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#007bff">
   <title>TMS Pro</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png" type="image/png">
@@ -679,6 +680,10 @@ if (logs.length > 0) {
 
 
 function hitungProduksi() {
+  if (logs.length === 0) {
+  alert("Belum ada data aktivitas yang dicatat.");
+  return;
+}
   const typeAlat = document.getElementById("typeAlat").value;
   const kapasitas = document.getElementById("kapasitasBucket").value;
   const metode = document.getElementById("metodeLoading").value;
@@ -742,7 +747,10 @@ document.getElementById("output").innerHTML = `
     </table>
   `;
 
-  new Chart(document.getElementById("pieChart"), {
+  // Bersihkan chart sebelumnya jika ada
+if (window.pieChart) window.pieChart.destroy();
+if (window.barChart) window.barChart.destroy();
+new Chart(document.getElementById("pieChart"), {
     type: 'pie',
     data: {
       labels: ["Primary Work", "Secondary Work"],
@@ -892,7 +900,7 @@ async function exportPDF() {
     });
   }
 
-  pdf.save("laporan_excavator.pdf");
+  pdf.save("TMSPro_Report.pdf");
 }
 </script>
 
@@ -934,8 +942,15 @@ function exportExcel() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Laporan");
 
-  XLSX.writeFile(wb, "laporan_excavator.xlsx");
+  XLSX.writeFile(wb, "TMSPro_Report.xlsx");
 }
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('SW registered'))
+    .catch(err => console.error('SW registration failed:', err));
+}
+
 </script>
 
 

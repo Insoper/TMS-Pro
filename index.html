@@ -200,6 +200,17 @@
   background-color: #004999;
 }
 
+.form-group {
+  margin-bottom: 15px;
+}
+.login-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
 </style>
 
 <!-- Login Container -->
@@ -214,17 +225,27 @@
 
     <!-- Form Login -->
     <div class="login-form">
-      <h2>Login</h2>
+  <h2>Login</h2>
 
-      <label for="username">Username:</label><br />
-      <input type="text" id="username" /><br /><br />
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" id="username" />
+  </div>
 
-      <label for="password">Password:</label><br />
-      <input type="password" id="password" /><br /><br />
+  <div class="form-group" style="position: relative;">
+    <label for="password">Password:</label>
+    <input type="password" id="password" style="padding-right: 40px;" />
+    <span onclick="togglePassword()" style="
+      position: absolute;
+      right: 10px;
+      bottom: 8px;
+      cursor: pointer;
+      font-size: 18px;">👁️</span>
+  </div>
 
-      <button onclick="checkLogin()">Login</button>
-      <p id="loginError" style="color: red;"></p>
-    </div>
+  <button onclick="checkLogin()">Login</button>
+  <p id="loginError" style="color: red;"></p>
+</div>
 
   </div>
 </div>
@@ -234,13 +255,23 @@
 function checkLogin() {
   const user = document.getElementById('username').value;
   const pass = document.getElementById('password').value;
+  
   if (user === 'Insoper_UT' && pass === 'dediKASI') {
+    const now = new Date().getTime();
+    localStorage.setItem("loginUser", JSON.stringify({ user, pass, time: now }));
+
     document.getElementById('loginContainer').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
   } else {
     document.getElementById('loginError').innerText = 'Username atau password salah';
   }
 }
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
 </script>
 
 <div id="mainApp" style="display:none;">
@@ -272,6 +303,9 @@ function checkLogin() {
 </select>
 
 <button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
+<button id="btnPause" onclick="togglePause()" disabled>⏸️ Pause</button>
+<button id="btnCorrection" onclick="applyCorrection()" disabled>🗑️ Correction</button>
+
 
 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 10px 0;">
   <div id="truckCounterContainer" style="display: block;">
@@ -349,8 +383,30 @@ let logs = [], currentFill = 1.0, started = false, lastTime = null, lastLabel = 
 let stepTimerInterval = null;
 let stepStartTime = null;
 let truckCount = 0;
+let paused = false;
+let correctionIndex = 0;
+
 
 function initializeForm() {
+  // Cek apakah ada data login tersimpan dan belum lebih dari 24 jam
+  const saved = localStorage.getItem("loginUser");
+  if (saved) {
+    try {
+      const { user, pass, time } = JSON.parse(saved);
+      const now = Date.now();
+      const diffHours = (now - time) / (1000 * 60 * 60);
+
+      if (diffHours <= 24) {
+        document.getElementById("username").value = user;
+        document.getElementById("password").value = pass;
+      } else {
+        localStorage.removeItem("loginUser"); // expired
+      }
+    } catch (e) {
+      console.error("Error parsing saved login", e);
+    }
+  }
+
   document.getElementById("typeAlat").addEventListener("change", function () {
     const type = this.value;
     const bucketSelect = document.getElementById("kapasitasBucket");
@@ -418,6 +474,10 @@ function startSession() {
   document.getElementById('truckCounterContainer').style.display = 'block';
   document.getElementById('btnPlus').disabled = false;
   document.getElementById('btnMinus').disabled = false;
+  document.getElementById("btnPause").disabled = false;
+  document.getElementById("btnCorrection").disabled = true;
+  correctionIndex = 0;
+
 }
 
 
@@ -464,6 +524,10 @@ function selesaiSession() {
   document.getElementById('truckCounterContainer').style.display = 'none';
   clearInterval(stepTimerInterval);
   document.getElementById('stepTimer').style.display = 'none';
+  paused = false;
+  document.getElementById("btnPause").disabled = true;
+  document.getElementById("btnCorrection").disabled = true;
+  document.getElementById("btnPause").innerText = "⏸️ Pause";
 
 
 }
@@ -485,6 +549,28 @@ function resetStepTimer() {
     const elapsed = ((now - stepStartTime) / 1000).toFixed(1);
     document.getElementById('stepTimerValue').innerText = elapsed;
   }, 100);
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById("btnPause").innerText = paused ? "▶️ Resume" : "⏸️ Pause";
+  document.getElementById("btnCorrection").disabled = !paused;
+
+  if (paused) {
+    clearInterval(stepTimerInterval);
+    document.getElementById("stepTimer").style.display = "none";
+  } else {
+    if (lastTime !== null) resetStepTimer(); // lanjutkan timer jika masih aktif
+  }
+}
+
+function applyCorrection() {
+  if (!paused || logs.length === 0) return;
+
+  const removed = logs.pop(); // hapus item terakhir
+  correctionIndex++;
+
+  alert(`Langkah "${removed.item}" telah dihapus (${correctionIndex} kali)`);
 }
 
 

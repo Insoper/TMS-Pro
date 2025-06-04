@@ -7,12 +7,12 @@ const urlsToCache = [
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/sw.js',
-'/chart.js',
-'/html2canvas.min.js',
-'/jspdf.umd.min.js',
-'/jspdf.plugin.autotable.min.js',
-'/xlsx.full.min.js',
+  '/service-worker.js',
+  '/chart.js',
+  '/html2canvas.min.js',
+  '/jspdf.umd.min.js',
+  '/jspdf.plugin.autotable.min.js',
+  '/xlsx.full.min.js'
 ];
 
 // Install SW dan simpan file ke cache

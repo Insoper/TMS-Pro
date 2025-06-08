@@ -719,8 +719,8 @@ document.getElementById("output").innerHTML = `
 
   <hr>
 
-  <p><strong>Total Cycle Time:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
-  <p><strong>Average Cycle Time:</strong> ${avgCycleTime.toFixed(2)} s</p>
+  <p><strong>Total Duration:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
+  <p><strong>Average Cycle Time/Pass:</strong> ${avgCycleTime.toFixed(2)} s</p>
   <p><strong>Primary Times:</strong> ${totalPrimary.toFixed(2)} s</p>
   <p><strong>Average Primary Times:</strong> ${(totalPrimary / (primary.length || 1)).toFixed(2)} s</p>
   <p><strong>Secondary Times:</strong> ${totalSecondary.toFixed(2)} s</p>

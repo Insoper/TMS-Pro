@@ -306,6 +306,7 @@ function togglePassword() {
 <button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
 <button id="btnPause" onclick="togglePause()" disabled>⏸️ Pause</button>
 <button id="btnCorrection" onclick="applyCorrection()" disabled>🗑️ Correction</button>
+<button id="btnEdit" onclick="startEdit()" disabled>✏️ Edit</button> <!-- Tambahan tombol Edit -->
 
 
 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 10px 0;">
@@ -389,6 +390,8 @@ let correctionIndex = 0;
 let stepElapsedTime = 0; // <- TAMBAHKAN INI
 let pauseStartTime = null;
 let totalPausedTime = 0;
+let editing = false; // <-- Variabel baru untuk mode Edit
+
 
 
 function initializeForm() {
@@ -487,6 +490,17 @@ function startSession() {
 
 function addStep(btn, category, item) {
   if (!started) return;
+  if (editing) {
+  lastLabel = { category, item }; // Ganti nama langkah, durasi tetap
+  editing = false;
+
+  // Nonaktifkan lagi tombol pilihan
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = true);
+
+  alert(`Langkah telah diperbaiki menjadi: ${item}`);
+  return;
+}
+
 
   const now = Date.now();
 
@@ -588,6 +602,7 @@ function resetSession() {
   lastLabel = null;
   truckCount = 0;
   correctionIndex = 0;
+  editing = false;
 
   stepElapsedTime = 0;
   pauseStartTime = null;
@@ -657,6 +672,8 @@ function togglePause() {
   paused = !paused;
   document.getElementById("btnPause").innerText = paused ? "▶️ Resume" : "⏸️ Pause";
   document.getElementById("btnCorrection").disabled = !paused;
+  document.getElementById("btnEdit").disabled = !paused;
+
 
   const primaryButtons = document.querySelectorAll('#primaryButtons button');
   const secondaryButtons = document.querySelectorAll('#secondaryButtons button');
@@ -722,6 +739,19 @@ if (logs.length > 0) {
 
   alert(`Langkah "${removed.item}" telah dihapus (${correctionIndex} kali)`);
 }
+
+
+function startEdit() {
+  if (!paused || !lastLabel) return;
+
+  editing = true;
+
+  // Aktifkan semua tombol Primary dan Secondary
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = false);
+
+  alert("Silakan pilih langkah baru untuk mengganti langkah aktif sebelumnya.");
+}
+
 
 
 

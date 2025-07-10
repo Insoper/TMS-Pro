@@ -1,58 +1,103 @@
-const CACHE_NAME = 'tms-cache';
-
-const urlsToCache = [
+const CACHE_NAME = 'tms-pro-cache-v1.3';
+const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
-  '/service-worker.js',
+  '/logo.png',
   '/chart.js',
   '/html2canvas.min.js',
   '/jspdf.umd.min.js',
   '/jspdf.plugin.autotable.min.js',
-  '/xlsx.full.min.js'
+  '/xlsx.full.min.js',
+  '/service-worker.js',
+  '/proxy.html'
 ];
 
-// Install SW dan simpan file ke cache
-self.addEventListener('install', function(event) {
+// Install event - cache all static assets
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      console.log('[SW] Caching app shell...');
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache');
+        return cache.addAll(ASSETS_TO_CACHE).catch(err => {
+          console.error('Failed to cache some assets:', err);
+        });
+      })
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting(); // Langsung aktifkan service worker baru
 });
 
-// Aktifkan SW dan hapus cache lama jika ada
-self.addEventListener('activate', function(event) {
+// Activate event - clean up old caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(function(name) {
-          if (name !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
           }
         })
       );
     })
+    .then(() => self.clients.claim())
   );
-  self.clients.claim(); // Kontrol semua tab
 });
 
-// Intersepsi fetch: pakai cache dulu, baru jaringan
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(response) {
-      return response || fetch(event.request).catch(() => {
-        // Optional: fallback untuk halaman HTML jika offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
-    })
-  );
+// Fetch event - network first with cache fallback
+self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
+  if (event.request.method !== 'GET') return;
+
+  // Handle API and data requests differently
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache API responses if needed
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // For static assets: cache first, then network
+    event.respondWith(
+      caches.match(event.request)
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          return fetch(event.request).then((response) => {
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          });
+        })
+    );
+  }
+});
+
+// Background sync example (optional)
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-data') {
+    console.log('Background sync triggered');
+    // Handle background sync here
+  }
 });

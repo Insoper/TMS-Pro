@@ -2,400 +2,494 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#007bff">
   <title>TMS Pro</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png" type="image/png">
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-  .fill-factor-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 10px;
-  row-gap: 6px;
-  margin-top: 4px;
-  margin-bottom: 8px;
-}
-
-.fill-factor-grid button {
-  background-color: #e0f0ff;
-  color: #004b7f;
-  border: 1px solid #007bff;
-  font-weight: bold;
-  border-radius: 8px;
-  padding: 12px 0;
-  transition: background-color 0.2s ease;
-}
-
-.fill-factor-grid button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-.fill-factor-grid button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+    /* Common styles */
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: Arial, sans-serif;
-      padding: 15px;
-      margin: auto;
-      max-width: 960px;
-      font-size: 17px;
+      padding: 10px;
+      margin: 0;
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
     }
-
-  judul-besar {
-  font-size: 36px;
-  font-weight: bold;
-  text-align: center;
-  margin: 20px 0 30px;
-}
-
-
-    h2, h3, label {
-      font-size: 18px;
+    
+    .judul-besar {
+      font-size: 24px;
       font-weight: bold;
-      margin: 10px 0 6px;
+      text-align: center;
+      margin: 15px 0 20px;
     }
-
+    
+    h2, h3, label {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 8px 0 5px;
+    }
+    
     select {
       padding: 8px 10px;
       font-size: 16px;
       border-radius: 6px;
       width: 100%;
-      max-width: 300px;
-      box-sizing: border-box;
+      border: 1px solid #ccc;
       margin-bottom: 8px;
+      background-color: white;
     }
-
+    
     button {
       padding: 10px;
       font-size: 16px;
       border-radius: 6px;
       border: 1px solid #888;
-      margin: 4px;
+      margin: 4px 0;
+      width: 100%;
+      min-height: 44px; /* Better touch target */
     }
-
+    
     .button-group {
       margin: 4px 0;
     }
-
+    
     .button-group button {
       background-color: #007bff;
       color: white;
       border: none;
-      width: 100%;
-      min-width: 140px;
+      min-width: auto;
     }
-
+    
     .button-group button.active {
       background-color: #003f7f;
     }
-
+    
     .button-group button:disabled {
       background-color: #ccc;
       color: #666;
       cursor: not-allowed;
     }
-
+    
     .grid-2col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
-
+    
     .hasil, .resume {
       background: #f9f9f9;
-      padding: 15px;
-      margin-top: 15px;
+      padding: 12px;
+      margin-top: 12px;
       border-radius: 6px;
+      overflow-x: auto;
     }
-
+    
     table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 8px;
+      min-width: 500px;
+    }
+    
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    
+    .charts {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .charts canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+    
+    .fill-factor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+    
+    .fill-factor-grid button {
+      background-color: #e0f0ff;
+      color: #004b7f;
+      border: 1px solid #007bff;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px 0;
+      transition: background-color 0.2s ease;
+      min-height: 50px;
+    }
+    
+    .fill-factor-grid button.active {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .fill-factor-grid button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    /* Login styles */
+    #loginContainer {
+      width: 100%;
+      max-width: 100%;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+    
+    .login-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .login-logo {
+      width: 100px;
+      height: auto;
+      object-fit: contain;
+    }
+    
+    .login-form {
+      width: 100%;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      min-height: 44px;
+    }
+    
+    .login-form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
       font-size: 16px;
       margin-top: 10px;
     }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
+    
+    .form-group {
+      margin-bottom: 15px;
     }
-
-    .charts {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: space-between;
-  margin-top: 15px;
-}
-.charts canvas {
-  width: 48% !important;
-  height: auto !important;
-}
-
-    .charts canvas {
+    
+    /* Step timer */
+    #stepTimer {
+      display: none;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 8px 12px;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      background-color: #f0f8ff;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 10px 0;
+    }
+    
+    /* View navigation */
+    .view-container {
+      display: none;
       width: 100%;
       max-width: 100%;
-      height: auto !important;
+      padding: 0 5px;
+    }
+    
+    .nav-button {
+      margin: 10px 0;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    /* iOS install prompt */
+    #iosInstallPrompt {
+      display: none;
+      padding: 12px;
+      background: #fef7d1;
+      border: 1px solid #e6c200;
+      font-size: 14px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    /* Truck counter */
+    #truckCounterContainer {
+      display: block;
+      margin: 10px 0;
+    }
+    
+    #truckCounterContainer button {
+      display: inline-block;
+      width: 50px;
+      margin: 0 5px;
+    }
+    
+    #truckCount {
+      display: inline-block;
+      min-width: 30px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    /* Button container for operation view */
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-row button {
+      flex: 1;
+    }
+    
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      body {
+        padding: 15px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      
+      .judul-besar {
+        font-size: 36px;
+      }
+      
+      .charts {
+        flex-direction: row;
+      }
+      
+      .charts canvas {
+        width: 48% !important;
+      }
+      
+      #loginContainer {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 30px;
+      }
+      
+      .login-content {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+      }
+      
+      .login-logo {
+        width: 120px;
+      }
     }
   </style>
 </head>
 <body onload="initializeForm()">
 
-<style>
-  /* Container utama halaman login */
-#loginContainer {
-  max-width: 700px;
-  margin: 100px auto;
-  padding: 30px;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  background-color: #fff;
-}
-
-/* Flex layout antara logo dan form login */
-.login-content {
-  display: flex;
-  align-items: center;      /* Posisikan secara vertikal */
-  gap: 30px;                /* Jarak antar elemen */
-}
-
-/* Logo */
-.login-logo {
-  width: 120px;             /* Sesuaikan ukuran logo */
-  height: auto;
-  object-fit: contain;
-}
-
-/* Form login */
-.login-form {
-  flex: 1;                  /* Ambil sisa ruang */
-}
-
-.login-form input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 10px;
-  background-color: #0066cc;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.login-form button:hover {
-  background-color: #004999;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-.login-form input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-}
-
-</style>
-
-<!-- Login Container -->
-<div id="loginContainer">
-  <!-- Wrapper dengan Flex -->
-  <div class="login-content">
-    
-    <!-- Logo -->
-    <div class="logo-container">
-      <img src="logo.png" alt="Logo" class="login-logo" />
+<!-- View 1: Login -->
+<div id="loginView" class="view-container">
+  <div id="loginContainer">
+    <div class="login-content">
+      <div class="logo-container">
+        <img src="logo.png" alt="Logo" class="login-logo" />
+      </div>
+      <div class="login-form">
+        <h2>Login</h2>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" />
+        </div>
+        <div class="form-group" style="position: relative;">
+          <label for="password">Password:</label>
+          <input type="password" id="password" style="padding-right: 40px;" />
+          <span onclick="togglePassword()" style="position: absolute; right: 10px; bottom: 8px; cursor: pointer; font-size: 18px;">👁️</span>
+        </div>
+        <button onclick="checkLogin()">Login</button>
+        <p id="loginError" style="color: red;"></p>
+      </div>
     </div>
-
-    <!-- Form Login -->
-    <div class="login-form">
-  <h2>Login</h2>
-
-  <div class="form-group">
-    <label for="username">Username:</label>
-    <input type="text" id="username" />
-  </div>
-
-  <div class="form-group" style="position: relative;">
-    <label for="password">Password:</label>
-    <input type="password" id="password" style="padding-right: 40px;" />
-    <span onclick="togglePassword()" style="
-      position: absolute;
-      right: 10px;
-      bottom: 8px;
-      cursor: pointer;
-      font-size: 18px;">👁️</span>
-  </div>
-
-  <button onclick="checkLogin()">Login</button>
-  <p id="loginError" style="color: red;"></p>
-</div>
-
   </div>
 </div>
 
-
-<script>
-function checkLogin() {
-  const user = document.getElementById('username').value;
-  const pass = document.getElementById('password').value;
+<!-- View 2: Input Alat -->
+<div id="inputAlatView" class="view-container">
+  <h1 class="judul-besar">TMS Pro</h1>
   
-  if (user === 'Insoper_UT' && pass === 'dediKASI') {
-    const now = new Date().getTime();
-    localStorage.setItem("loginUser", JSON.stringify({ user, pass, time: now }));
+  <label>Type Alat:</label>
+  <select id="typeAlat">
+    <option value="">-- Pilih Type Alat --</option>
+    <option value="PC1250-8">PC1250-8</option>
+    <option value="PC1250-11R">PC1250-11R</option>
+    <option value="PC2000-8">PC2000-8</option>
+    <option value="PC2000-11R">PC2000-11R</option>
+    <option value="PC3400-11M0">PC3400-11M0</option>
+  </select>
 
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-  } else {
-    document.getElementById('loginError').innerText = 'Username atau password salah';
-  }
-}
+  <label>Kapasitas Bucket (m³):</label>
+  <select id="kapasitasBucket">
+    <option value="">-- Pilih Kapasitas --</option>
+  </select>
 
-function togglePassword() {
-  const input = document.getElementById("password");
-  input.type = input.type === "password" ? "text" : "password";
-}
+  <label>Metode Loading:</label>
+  <select id="metodeLoading">
+    <option value="">-- Pilih Metode --</option>
+    <option>Top Loading</option>
+    <option>Bench Loading</option>
+    <option>Double Bench Loading</option>
+  </select>
 
-</script>
+  <label>Jenis Material:</label>
+  <select id="jenisMaterial">
+    <option value="">-- Pilih Material --</option>
+    <option value="0.9">Sand</option>
+    <option value="0.8">Sandy Clay</option>
+    <option value="0.7">Clay</option>
+    <option value="0.85">Gravelly Soil</option>
+    <option value="0.88">Gravel</option>
+    <option value="0.7">Solid or Rugged Gravel</option>
+    <option value="0.61">Limestone/Sandstone/Soft Rocks</option>
+    <option value="0.59">Granite/Basalt/Hard Rocks</option>
+    <option value="0.57">Rocks</option>
+  </select>
+  
+  <button id="btnNextToOperation" class="nav-button" onclick="showOperationView()" disabled>Lanjut ke Operasi →</button>
+</div>
 
-<div id="mainApp" style="display:none;">
+<!-- View 3: Operation -->
+<div id="operationView" class="view-container">
+  <h1 class="judul-besar">TMS Pro</h1>
+  
+  <div class="button-row">
+    <button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
+    <button id="btnPause" onclick="togglePause()" disabled>⏸️ Pause</button>
+    <button id="btnEdit" onclick="startEdit()" disabled>✏️ Edit</button>
+  </div>
 
-<h1 class="judul-besar">TMS Pro</h1>
-
-
-<label>Type Alat:</label>
-<select id="typeAlat">
-  <option value="">-- Pilih Type Alat --</option>
-  <option value="PC1250-8">PC1250-8</option>
-  <option value="PC1250-11R">PC1250-11R</option>
-  <option value="PC2000-8">PC2000-8</option>
-  <option value="PC2000-11R">PC2000-11R</option>
-  <option value="PC3400-11M0">PC3400-11M0</option>
-</select>
-
-<label>Kapasitas Bucket (m³):</label>
-<select id="kapasitasBucket">
-  <option value="">-- Pilih Kapasitas --</option>
-</select>
-
-<label>Metode Loading:</label>
-<select id="metodeLoading">
-  <option value="">-- Pilih Metode --</option>
-  <option>Top Loading</option>
-  <option>Bench Loading</option>
-  <option>Double Bench Loading</option>
-</select>
-
-<button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
-<button id="btnPause" onclick="togglePause()" disabled>⏸️ Pause</button>
-<button id="btnCorrection" onclick="applyCorrection()" disabled>🗑️ Correction</button>
-<button id="btnEdit" onclick="startEdit()" disabled>✏️ Edit</button> <!-- Tambahan tombol Edit -->
-
-
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin: 10px 0;">
-  <div id="truckCounterContainer" style="display: block;">
+  <div id="truckCounterContainer">
     <label><strong>Truck Counter:</strong></label><br>
     <button onclick="updateTruckCount(-1)" id="btnMinus" disabled>-</button>
-    <span id="truckCount" style="margin: 0 10px;">0</span>
+    <span id="truckCount">0</span>
     <button onclick="updateTruckCount(1)" id="btnPlus" disabled>+</button>
   </div>
 
-  <div id="stepTimer" style="
-    display: none;
-    font-weight: bold;
-    font-size: 18px;
-    padding: 10px 16px;
-    border: 2px solid #007bff;
-    border-radius: 8px;
-    background-color: #f0f8ff;
-    min-width: 140px;
-    text-align: right;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  ">
+  <div id="stepTimer">
     ⏱️ <span id="stepTimerValue">0.0</span> detik
+  </div>
+
+  <h3>Bucket Fill Factor:</h3>
+  <div class="fill-factor-grid" id="fillFactors">
+    <button onclick="setFill(this, 0.7)" disabled>0.7</button>
+    <button onclick="setFill(this, 0.8)" disabled>0.8</button>
+    <button onclick="setFill(this, 0.9)" disabled>0.9</button>
+    <button onclick="setFill(this, 1.0)" class="active" disabled>1.0</button>
+    <button onclick="setFill(this, 1.1)" disabled>1.1</button>
+    <button onclick="setFill(this, 1.2)" disabled>1.2</button>
+  </div>
+
+  <h3>Primary Work:</h3>
+  <div class="button-group grid-2col" id="primaryButtons">
+    <button onclick="addStep(this, 'Primary Work', 'Dig to Load')" disabled>Dig to Load →</button>
+    <button onclick="addStep(this, 'Primary Work', 'Swing Loaded')" disabled>Swing Loaded ↓</button>
+    <button onclick="addStep(this, 'Primary Work', 'Swing Empty')" disabled>Swing Empty ↑</button>
+    <button onclick="addStep(this, 'Primary Work', 'Dump')" disabled>Dump ←</button>
+  </div>
+
+  <h3>Secondary Work:</h3>
+  <div class="button-group grid-2col" id="secondaryButtons">
+    <button onclick="addStep(this, 'Secondary Work', 'Dig to Prepare')" disabled>Dig to Prepare</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Wait to Dump')" disabled>Wait to Dump</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Idle')" disabled>Idle</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Cleaning')" disabled>Cleaning</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Positioning')" disabled>Positioning</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Others')" disabled>Others</button>
+  </div>
+
+  <button id="btnSelesai" onclick="selesaiSession()" disabled>✅ Selesai</button>
+  <button id="btnSummary" onclick="hitungProduksi()" disabled>📊 Summary</button>
+  <button id="btnExportPDF" onclick="exportPDF()" disabled>🧾 Export ke PDF</button>
+  <button id="btnExportExcel" onclick="exportExcel()" disabled>📄 Export ke Excel</button>
+  <button id="btnExportSheets" onclick="exportToGoogleSheets()" disabled>📤 Export ke Google Sheets</button>
+  <button class="nav-button" onclick="showInputAlatView()">Kembali ke Input Alat</button>
+
+  <div class="hasil" id="output"></div>
+  <div class="resume" id="resume"></div>
+  <div class="charts">
+    <canvas id="pieChart"></canvas>
+    <canvas id="barChart"></canvas>
   </div>
 </div>
 
-
-
-<h3>Bucket Fill Factor:</h3>
-<div class="fill-factor-grid" id="fillFactors">
-  <button onclick="setFill(this, 0.7)" disabled>0.7</button>
-  <button onclick="setFill(this, 0.8)" disabled>0.8</button>
-  <button onclick="setFill(this, 0.9)" disabled>0.9</button>
-  <button onclick="setFill(this, 1.0)" class="active" disabled>1.0</button>
-  <button onclick="setFill(this, 1.1)" disabled>1.1</button>
-  <button onclick="setFill(this, 1.2)" disabled>1.2</button>
-</div>
-
-
-<h3>Primary Work:</h3>
-<div class="button-group grid-2col" id="primaryButtons">
-  <button onclick="addStep(this, 'Primary Work', 'Dig to Load')" disabled>Dig to Load  →</button>
-  <button onclick="addStep(this, 'Primary Work', 'Swing Loaded')" disabled>Swing Loaded ↓</button>
-  <button onclick="addStep(this, 'Primary Work', 'Swing Empty')" disabled>Swing Empty ↑</button>
-  <button onclick="addStep(this, 'Primary Work', 'Dump')" disabled>Dump ←</button>
-</div>
-
-
-<h3>Secondary Work:</h3>
-<div class="button-group grid-2col" id="secondaryButtons">
-  <button onclick="addStep(this, 'Secondary Work', 'Dig to Prepare')" disabled>Dig to Prepare</button>
-  <button onclick="addStep(this, 'Secondary Work', 'Wait to Dump')" disabled>Wait to Dump</button>
-  <button onclick="addStep(this, 'Secondary Work', 'Idle')" disabled>Idle</button>
-  <button onclick="addStep(this, 'Secondary Work', 'Cleaning')" disabled>Cleaning</button>
-  <button onclick="addStep(this, 'Secondary Work', 'Positioning')" disabled>Positioning</button>
-  <button onclick="addStep(this, 'Secondary Work', 'Others')" disabled>Others</button>
-</div>
-
-
-<button id="btnSelesai" onclick="selesaiSession()" disabled>✅ Selesai</button>
-<button id="btnSummary" onclick="hitungProduksi()" disabled>📊 Summary</button>
-<button id="btnExportPDF" onclick="exportPDF()" disabled>🧾 Export ke PDF</button>
-<button id="btnExportExcel" onclick="exportExcel()" disabled>📄 Export ke Excel</button>
-
-
-
-<div class="hasil" id="output"></div>
-<div class="resume" id="resume"></div>
-<div class="charts">
-  <canvas id="pieChart"></canvas>
-  <canvas id="barChart"></canvas>
+<!-- iOS install prompt -->
+<div id="iosInstallPrompt">
+  📱 Untuk menginstal aplikasi ini di iPhone, tap tombol <strong>Bagikan</strong> (ikon ⬆️ di bawah), lalu pilih <strong>Tambahkan ke Layar Utama</strong>.
 </div>
 
 <script>
+// View management functions
+function showLoginView() {
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'none';
+}
+
+function showInputAlatView() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('inputAlatView').style.display = 'block';
+  document.getElementById('operationView').style.display = 'none';
+}
+
+function showOperationView() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'block';
+}
+
+// Application variables
 let logs = [], currentFill = 1.0, started = false, lastTime = null, lastLabel = null;
 let stepTimerInterval = null;
 let stepStartTime = null;
 let truckCount = 0;
 let paused = false;
 let correctionIndex = 0;
-let stepElapsedTime = 0; // <- TAMBAHKAN INI
+let stepElapsedTime = 0;
 let pauseStartTime = null;
 let totalPausedTime = 0;
-let editing = false; // <-- Variabel baru untuk mode Edit
+let editing = false;
 
-
-
+// Initialize the app
 function initializeForm() {
-  // Cek apakah ada data login tersimpan dan belum lebih dari 24 jam
+  showLoginView();
+  
+  // Check for saved login
   const saved = localStorage.getItem("loginUser");
   if (saved) {
     try {
@@ -407,53 +501,84 @@ function initializeForm() {
         document.getElementById("username").value = user;
         document.getElementById("password").value = pass;
       } else {
-        localStorage.removeItem("loginUser"); // expired
+        localStorage.removeItem("loginUser");
       }
     } catch (e) {
       console.error("Error parsing saved login", e);
     }
   }
 
-  document.getElementById("typeAlat").addEventListener("change", function () {
+  // iOS install prompt
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+  const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+  if (isIOS && !isInStandaloneMode) {
+    document.getElementById('iosInstallPrompt').style.display = 'block';
+  }
+
+  // Type alat change listener
+  document.getElementById("typeAlat").addEventListener("change", function() {
     const type = this.value;
     const bucketSelect = document.getElementById("kapasitasBucket");
     bucketSelect.innerHTML = '<option value="">-- Pilih Kapasitas --</option>';
 
     let options = [];
-
     if (type === "PC1250-8" || type === "PC1250-11R") {
       options = [6.7, 7.5];
     } else if (type === "PC2000-8" || type === "PC2000-11R") {
       options = [12, 14];
     } else if (type === "PC3400-11M0") {
       options = [18, 19.7];
+    }
+
+    if (options.length > 0) {
+      options.forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val.toString().replace(".", ",");
+        bucketSelect.appendChild(opt);
+      });
     } else {
       const opt = document.createElement("option");
       opt.value = "";
       opt.textContent = "-- Isi Manual --";
       bucketSelect.appendChild(opt);
-      return;
     }
-
-    options.forEach(val => {
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = val.toString().replace(".", ",");
-      bucketSelect.appendChild(opt);
-    });
+    cekForm();
   });
 
-  ['typeAlat', 'kapasitasBucket', 'metodeLoading'].forEach(id => {
+  // Other dropdown listeners
+  ['kapasitasBucket', 'metodeLoading', 'jenisMaterial'].forEach(id => {
     document.getElementById(id).addEventListener('change', cekForm);
   });
+
   cekForm();
 }
 
 function cekForm() {
   const filled = document.getElementById('typeAlat').value &&
-                 document.getElementById('kapasitasBucket').value &&
-                 document.getElementById('metodeLoading').value;
+               document.getElementById('kapasitasBucket').value &&
+               document.getElementById('metodeLoading').value &&
+               document.getElementById('jenisMaterial').value;
   document.getElementById('btnStart').disabled = !filled;
+  document.getElementById('btnNextToOperation').disabled = !filled;
+}
+
+function checkLogin() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  
+  if (user === 'Insoper_UT' && pass === 'dediKASI') {
+    const now = new Date().getTime();
+    localStorage.setItem("loginUser", JSON.stringify({ user, pass, time: now }));
+    showInputAlatView();
+  } else {
+    document.getElementById('loginError').innerText = 'Username atau password salah';
+  }
+}
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
 }
 
 function setFill(btn, val) {
@@ -471,36 +596,37 @@ function startSession() {
   truckCount = 0;
   document.getElementById('truckCount').innerText = truckCount;
 
-  document.querySelectorAll('button').forEach(btn => {
-    if (btn.id !== 'btnStart') btn.disabled = false;
+  document.querySelectorAll('#operationView button').forEach(btn => {
+    if (btn.id !== 'btnStart') btn.disabled = true;
   });
 
   document.getElementById('btnStart').disabled = true;
+  document.getElementById('btnEdit').disabled = true;
+  document.getElementById('btnPause').disabled = true;
 
   // Aktifkan counter
   document.getElementById('truckCounterContainer').style.display = 'block';
   document.getElementById('btnPlus').disabled = false;
   document.getElementById('btnMinus').disabled = false;
-  document.getElementById("btnPause").disabled = false;
-  document.getElementById("btnCorrection").disabled = true;
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = false);
   correctionIndex = 0;
-
 }
-
 
 function addStep(btn, category, item) {
   if (!started) return;
+
+  document.getElementById("btnPause").disabled = false;
+
   if (editing) {
-  lastLabel = { category, item }; // Ganti nama langkah, durasi tetap
-  editing = false;
+    lastLabel = { category, item };
+    editing = false;
 
-  // Nonaktifkan lagi tombol pilihan
-  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = true);
+    // Nonaktifkan lagi tombol pilihan
+    document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = true);
 
-  alert(`Langkah telah diperbaiki menjadi: ${item}`);
-  return;
-}
-
+    alert(`Langkah telah diperbaiki menjadi: ${item}`);
+    return;
+  }
 
   const now = Date.now();
 
@@ -545,7 +671,6 @@ function addStep(btn, category, item) {
   }
 }
 
-
 function selesaiSession() {
   if (!started || lastTime === null || lastLabel === null) return;
   const now = Date.now();
@@ -570,7 +695,7 @@ function selesaiSession() {
   lastTime = null;
   lastLabel = null;
 
-  document.querySelectorAll('button').forEach(b => b.disabled = true);
+  document.querySelectorAll('#operationView button').forEach(b => b.disabled = true);
   document.getElementById('btnStart').disabled = false;
   document.getElementById('btnSummary').disabled = false;
 
@@ -581,17 +706,15 @@ function selesaiSession() {
   clearInterval(stepTimerInterval);
   document.getElementById('stepTimer').style.display = 'none';
 
-  // Nonaktifkan tombol pause dan correction
+  // Nonaktifkan tombol pause
   paused = false;
   document.getElementById("btnPause").disabled = true;
   document.getElementById("btnPause").innerText = "⏸️ Pause";
-  document.getElementById("btnCorrection").disabled = true;
 
   const btnStart = document.getElementById('btnStart');
   btnStart.innerText = "🔄 Reset";
   btnStart.onclick = resetSession;
 }
-
 
 function resetSession() {
   // Reset variabel
@@ -612,16 +735,11 @@ function resetSession() {
   document.getElementById('output').innerHTML = '';
   document.getElementById('resume').innerHTML = '';
 
-  // Reset grafik (hapus canvas dan buat ulang kosong)
+  // Reset grafik
   const pieChartCanvas = document.getElementById("pieChart");
   const barChartCanvas = document.getElementById("barChart");
   if (pieChartCanvas && pieChartCanvas.chart) pieChartCanvas.chart.destroy();
   if (barChartCanvas && barChartCanvas.chart) barChartCanvas.chart.destroy();
-
-  // Reset form isian
-  document.getElementById('typeAlat').value = "";
-  document.getElementById('kapasitasBucket').innerHTML = '<option value="">-- Pilih Kapasitas --</option>';
-  document.getElementById('metodeLoading').value = "";
 
   // Reset tombol mulai
   const btnStart = document.getElementById('btnStart');
@@ -636,6 +754,7 @@ function resetSession() {
   // Nonaktifkan export
   document.getElementById("btnExportPDF").disabled = true;
   document.getElementById("btnExportExcel").disabled = true;
+  document.getElementById("btnExportSheets").disabled = true;
 
   // Nonaktifkan fill factor active
   document.querySelectorAll('#fillFactors button').forEach(btn => {
@@ -643,10 +762,9 @@ function resetSession() {
     if (btn.innerText === "1.0") btn.classList.add('active');
   });
 
-  // Cek form lagi agar tombol mulai hanya aktif kalau input terisi
+  // Cek form lagi
   cekForm();
 }
-
 
 function updateTruckCount(delta) {
   if (!started) return;
@@ -667,99 +785,91 @@ function resetStepTimer() {
   }, 100);
 }
 
-
 function togglePause() {
+  // Only allow pausing if a work step has been selected
+  if (!paused && (!lastLabel || !lastTime)) {
+    alert("Silakan pilih langkah kerja terlebih dahulu sebelum pause");
+    return;
+  }
+
+  // Toggle pause state
   paused = !paused;
+  
+  // Update button text
   document.getElementById("btnPause").innerText = paused ? "▶️ Resume" : "⏸️ Pause";
-  document.getElementById("btnCorrection").disabled = !paused;
+  
+  // Enable/disable edit button
   document.getElementById("btnEdit").disabled = !paused;
 
-
+  // Get all relevant buttons
   const primaryButtons = document.querySelectorAll('#primaryButtons button');
   const secondaryButtons = document.querySelectorAll('#secondaryButtons button');
   const fillFactorButtons = document.querySelectorAll('#fillFactors button');
 
   if (paused) {
+    // When pausing:
+    // Disable all work buttons
     primaryButtons.forEach(btn => btn.disabled = true);
     secondaryButtons.forEach(btn => btn.disabled = true);
     fillFactorButtons.forEach(btn => btn.disabled = true);
+    
+    // Enable finish button
     document.getElementById('btnSelesai').disabled = false;
 
-    pauseStartTime = Date.now(); // Catat waktu mulai pause
-
+    // Record pause start time
+    pauseStartTime = Date.now();
+    
+    // Stop the timer
     clearInterval(stepTimerInterval);
+    
+    // Calculate elapsed time
     const now = Date.now();
     stepElapsedTime += (now - stepStartTime) / 1000;
+    
+    // Update timer display
     document.getElementById('stepTimer').style.display = 'block';
     document.getElementById('stepTimerValue').innerText = stepElapsedTime.toFixed(1);
   } else {
+    // When resuming:
+    // Calculate total paused time
     if (pauseStartTime) {
       totalPausedTime += (Date.now() - pauseStartTime);
       pauseStartTime = null;
     }
 
     if (started) {
+      // Re-enable appropriate buttons
       primaryButtons.forEach(btn => btn.disabled = false);
       secondaryButtons.forEach(btn => btn.disabled = false);
+      
+      // Only enable fill factor buttons for specific steps
       if (lastLabel && (lastLabel.item === "Dig to Load" || lastLabel.item === "Swing Loaded")) {
         fillFactorButtons.forEach(btn => btn.disabled = false);
       }
     }
+    
+    // Restart the timer
     resetStepTimer();
+    
+    // Disable finish button during operation
+    document.getElementById('btnSelesai').disabled = true;
   }
 }
-
-
-function applyCorrection() {
-  if (!paused || logs.length === 0) return;
-
-  const removed = logs.pop(); // hapus langkah terakhir
-  correctionIndex++;
-
-  // Hapus class 'active' dari semua tombol langkah kerja
-  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.classList.remove('active'));
-
-  // Reset label dan waktu terakhir
-  lastLabel = null;
-  lastTime = null;
-
-// Update label dan waktu terakhir jika masih ada langkah tersisa
-if (logs.length > 0) {
-  const last = logs[logs.length - 1];
-  lastLabel = { category: last.category, item: last.item };
-  lastTime = Date.now(); // mulai ulang timer dari sekarang
-  resetStepTimer();
-} else {
-  lastLabel = null;
-  lastTime = null;
-  clearInterval(stepTimerInterval);
-  document.getElementById('stepTimer').style.display = 'none';
-}
-
-
-  alert(`Langkah "${removed.item}" telah dihapus (${correctionIndex} kali)`);
-}
-
 
 function startEdit() {
   if (!paused || !lastLabel) return;
 
   editing = true;
-
-  // Aktifkan semua tombol Primary dan Secondary
   document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = false);
-
   alert("Silakan pilih langkah baru untuk mengganti langkah aktif sebelumnya.");
 }
 
-
-
-
 function hitungProduksi() {
   if (logs.length === 0) {
-  alert("Belum ada data aktivitas yang dicatat.");
-  return;
-}
+    alert("Belum ada data aktivitas yang dicatat.");
+    return;
+  }
+  
   const typeAlat = document.getElementById("typeAlat").value;
   const kapasitas = document.getElementById("kapasitasBucket").value;
   const metode = document.getElementById("metodeLoading").value;
@@ -773,7 +883,8 @@ function hitungProduksi() {
   const avgCycleTime = dumpCount > 0 ? totalPrimary / dumpCount : 0;
   const efficiency = totalPrimary / (totalPrimary + totalSecondary);
   const avgFill = logs.reduce((a,b)=>a+b.fillFactor,0) / logs.length;
-  const produksi = (bucket * avgFill * 3600 * efficiency) / (avgCycleTime || 1);
+  const swellFactor = parseFloat(document.getElementById("jenisMaterial").value) || 1;
+  const produksi = (bucket * avgFill * 3600 * efficiency * swellFactor) / (avgCycleTime || 1);
 
   const digToLoad = primary.filter(l => l.item === "Dig to Load");
   const swingLoaded = primary.filter(l => l.item === "Swing Loaded");
@@ -787,28 +898,29 @@ function hitungProduksi() {
   if (avg(swingLoaded) > 6 || avg(swingEmpty) > 6) suggestions.push("⚠️ Swing > 6 detik. Perkecil sudut swing.");
   if (avg(dump) > 6) suggestions.push("⚠️ Dump > 6 detik. Perbaiki posisi dump truck atau ketinggian bench.");
 
-document.getElementById("output").innerHTML = `
-  <p><strong>Type Alat:</strong> ${typeAlat}</p>
-  <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
-  <p><strong>Metode Loading:</strong> ${metode}</p>      
-  <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
-
-  <hr>
-
-  <p><strong>Total Duration:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
-  <p><strong>Average Cycle Time/Pass:</strong> ${avgCycleTime.toFixed(2)} s</p>
-  <p><strong>Primary Times:</strong> ${totalPrimary.toFixed(2)} s</p>
-  <p><strong>Average Primary Times:</strong> ${(totalPrimary / (primary.length || 1)).toFixed(2)} s</p>
-  <p><strong>Secondary Times:</strong> ${totalSecondary.toFixed(2)} s</p>
-  <p><strong>Average Secondary Times:</strong> ${(totalSecondary / (secondary.length || 1)).toFixed(2)} s</p>
-  <p><strong>Work Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
-  <p><strong>Average Bucket Fill Factor:</strong> ${avgFill.toFixed(2)}</p>
-  <p><strong>Total Bucket Pass (Dump Count):</strong> ${dumpCount}</p>
-  <p><strong>Productivity:</strong> ${produksi.toFixed(2)} m³/jam</p>
-`;
+  document.getElementById("output").innerHTML = `
+    <p><strong>Type Alat:</strong> ${typeAlat}</p>
+    <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
+    <p><strong>Metode Loading:</strong> ${metode}</p>    
+    <p><strong>Jenis Material:</strong> ${document.getElementById("jenisMaterial").selectedOptions[0].text}</p>
+    <p><strong>Swell Factor:</strong> ${swellFactor}</p>
+    <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
+    <hr>
+    <p><strong>Total Duration:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
+    <p><strong>Average Cycle Time/Pass:</strong> ${avgCycleTime.toFixed(2)} s</p>
+    <p><strong>Primary Times:</strong> ${totalPrimary.toFixed(2)} s</p>
+    <p><strong>Average Primary Times:</strong> ${(totalPrimary / (primary.length || 1)).toFixed(2)} s</p>
+    <p><strong>Secondary Times:</strong> ${totalSecondary.toFixed(2)} s</p>
+    <p><strong>Average Secondary Times:</strong> ${(totalSecondary / (secondary.length || 1)).toFixed(2)} s</p>
+    <p><strong>Work Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
+    <p><strong>Average Bucket Fill Factor:</strong> ${avgFill.toFixed(2)}</p>
+    <p><strong>Total Bucket Pass (Dump Count):</strong> ${dumpCount}</p>
+    <p><strong>Productivity:</strong> ${produksi.toFixed(2)} m³/jam</p>
+  `;
 
   document.getElementById("btnExportPDF").disabled = false;
   document.getElementById("btnExportExcel").disabled = false;
+  document.getElementById("btnExportSheets").disabled = false;
   document.getElementById("resume").innerHTML = `
     <h3>Resume Pengoperasian:</h3>
     <ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>
@@ -823,60 +935,47 @@ document.getElementById("output").innerHTML = `
     </table>
   `;
 
+  // Create pie chart
+  const pieChartCanvas = document.getElementById("pieChart");
+  window.pieChart = new Chart(pieChartCanvas, {
+    type: 'pie',
+    data: {
+      labels: ["Primary Work", "Secondary Work"],
+      datasets: [{
+        data: [totalPrimary, totalSecondary],
+        backgroundColor: ["#007bff", "#ffc107"]
+      }]
+    }
+  });
+  pieChartCanvas.chart = window.pieChart;
 
-const pieChartCanvas = document.getElementById("pieChart");
-window.pieChart = new Chart(pieChartCanvas, {
-  type: 'pie',
-  data: {
-    labels: ["Primary Work", "Secondary Work"],
-    datasets: [{
-      data: [totalPrimary, totalSecondary],
-      backgroundColor: ["#007bff", "#ffc107"]
-    }]
-  }
-});
-pieChartCanvas.chart = window.pieChart;
-
+  // Create bar chart
   const primaryItems = [...new Set(primary.map(p => p.item))];
   const avgDurasi = primaryItems.map(item => {
     const steps = primary.filter(p => p.item === item);
     return steps.reduce((a,b)=>a+b.durasi,0)/steps.length;
   });
 
-
- const barChartCanvas = document.getElementById("barChart");
-window.barChart = new Chart(barChartCanvas, {
-  type: 'bar',
-  data: {
-    labels: primaryItems,
-    datasets: [{
-      label: "Rata-rata Durasi (detik)",
-      data: avgDurasi,
-      backgroundColor: "#28a745"
-    }]
-  },
-  options: {
-    scales: {
-      y: { beginAtZero: true }
+  const barChartCanvas = document.getElementById("barChart");
+  window.barChart = new Chart(barChartCanvas, {
+    type: 'bar',
+    data: {
+      labels: primaryItems,
+      datasets: [{
+        label: "Rata-rata Durasi (detik)",
+        data: avgDurasi,
+        backgroundColor: "#28a745"
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
     }
-  }
-});
-barChartCanvas.chart = window.barChart;
-
-
+  });
+  barChartCanvas.chart = window.barChart;
 }
-</script>
 
-
-
-<!-- Tambahkan ini di bagian <head> -->
-<script src="chart.js"></script>
-<script src="html2canvas.min.js"></script>
-<script src="jspdf.umd.min.js"></script>
-<script src="jspdf.plugin.autotable.min.js"></script>
-<script src="xlsx.full.min.js"></script>
-
-<script>
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
   await new Promise(resolve => setTimeout(resolve, 500));
@@ -951,47 +1050,45 @@ async function exportPDF() {
 
   chartContainer.remove();
 
-  // Tambahkan Saran
-const resumeHTML = document.getElementById("resume").innerHTML;
-const parser = new DOMParser();
-const doc = parser.parseFromString(resumeHTML, "text/html");
-const lis = doc.querySelectorAll("ul li");
+  // Add suggestions
+  const resumeHTML = document.getElementById("resume").innerHTML;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(resumeHTML, "text/html");
+  const lis = doc.querySelectorAll("ul li");
 
-if (lis.length > 0) {
-  if (y + 20 > pageHeight - margin) {
-    pdf.addPage();
-    y = margin;
+  if (lis.length > 0) {
+    if (y + 20 > pageHeight - margin) {
+      pdf.addPage();
+      y = margin;
+    }
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.text("Saran:", margin, y);
+    y += 18;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+
+    lis.forEach(li => {
+      let bulletText = li.textContent.trim();
+      bulletText = bulletText.replace(/[^a-zA-Z0-9\s.,%<>=:/()-]/g, "");
+
+      const safeWidth = pageWidth - 2 * margin - 10;
+      const wrapped = pdf.splitTextToSize("• " + bulletText, safeWidth);
+
+      wrapped.forEach(line => {
+        if (y > pageHeight - margin - 12) {
+          pdf.addPage();
+          y = margin;
+        }
+        pdf.text(line, margin + 10, y);
+        y += 12;
+      });
+    });
   }
 
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(12);
-  pdf.text("Saran:", margin, y);
-  y += 18;
-
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(10);
-
-  lis.forEach(li => {
-    let bulletText = li.textContent.trim();
-
-    // Hilangkan karakter aneh (pastikan teks bersih)
-    bulletText = bulletText.replace(/[^a-zA-Z0-9\s.,%<>=:/()-]/g, "");
-
-    const safeWidth = pageWidth - 2 * margin - 10;
-    const wrapped = pdf.splitTextToSize("• " + bulletText, safeWidth);
-
-    wrapped.forEach(line => {
-      if (y > pageHeight - margin - 12) {
-        pdf.addPage();
-        y = margin;
-      }
-      pdf.text(line, margin + 10, y);
-      y += 12;
-    });
-  });
-}
-
-
+  // Add table
   const table = document.querySelector("#resume table");
   if (table) {
     pdf.addPage();
@@ -1005,9 +1102,7 @@ if (lis.length > 0) {
 
   pdf.save("TMSPro_Report.pdf");
 }
-</script>
 
-<script>
 function exportExcel() {
   const table = document.querySelector("#resume table");
   if (!table) return alert("Tidak ada data untuk diekspor.");
@@ -1024,57 +1119,80 @@ function exportExcel() {
   });
 
   // Ambil data langkah operasi
- const rows = Array.from(table.rows).map((row, i) =>
-  Array.from(row.cells).map((cell, j) => {
-    const text = cell.innerText.trim().replace(",", ".");
-    return i === 0 || isNaN(text) ? cell.innerText : parseFloat(text);
-  })
-);
-
+  const rows = Array.from(table.rows).map((row, i) =>
+    Array.from(row.cells).map((cell, j) => {
+      const text = cell.innerText.trim().replace(",", ".");
+      return i === 0 || isNaN(text) ? cell.innerText : parseFloat(text);
+    })
+  );
 
   // Gabungkan semua data
   const allData = [
-    ["RINGKASAN PRODUKTIVITAS", ""], // Baris A1
-    ...ringkasan,                    // A2 dst
-    [],                              // baris kosong pemisah
+    ["RINGKASAN PRODUKTIVITAS", ""],
+    ...ringkasan,
+    [],
     ["DETAIL LANGKAH OPERASI"],
     ...rows
   ];
 
   const ws = XLSX.utils.aoa_to_sheet(allData);
-
-  // Gabungkan cell A1:B1
   ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }];
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Laporan");
-
   XLSX.writeFile(wb, "TMSPro_Report.xlsx");
 }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js')
-    .then(() => console.log('SW registered'))
-    .catch(err => console.error('SW registration failed:', err));
-}
-
-</script>
-
-
-</div>
-<!-- Petunjuk Install untuk iOS -->
-<div id="iosInstallPrompt" style="display: none; padding: 15px; background: #fef7d1; border: 1px solid #e6c200; font-size: 16px; margin-top: 20px; border-radius: 8px;">
-  📱 Untuk menginstal aplikasi ini di iPhone, tap tombol <strong>Bagikan</strong> (ikon ⬆️ di bawah), lalu pilih <strong>Tambahkan ke Layar Utama</strong>.
-</div>
-
-<script>
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
-  const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
-
-  if (isIOS && !isInStandaloneMode) {
-    document.getElementById('iosInstallPrompt').style.display = 'block';
+function exportToGoogleSheets() {
+  if (logs.length === 0) {
+    alert("Tidak ada data untuk diekspor!");
+    return;
   }
+
+  const data = {
+    typeAlat: document.getElementById("typeAlat").value || "N/A",
+    kapasitasBucket: document.getElementById("kapasitasBucket").value || "N/A",
+    metodeLoading: document.getElementById("metodeLoading").value || "N/A",
+    truckCount: truckCount.toString(),
+    logs: JSON.stringify(logs)
+  };
+
+  const encodedData = Object.entries(data).map(
+    ([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+  ).join("&");
+  
+  const proxyUrl = "https://insoper.github.io/TMS-Pro-Spreadsheet/proxy.html";
+  const proxyWindow = window.open(
+    `${proxyUrl}?${encodedData}`,
+    "_blank",
+    "width=600,height=500"
+  );
+  
+  const handleMessage = (event) => {
+    if (typeof event.data !== 'object') return;
+    
+    if (event.data.success) {
+      alert(event.data.message || "✅ Data berhasil disimpan!");
+      console.log("Detail:", event.data.details);
+    } else {
+      alert(`❌ ${event.data.error || "Gagal menyimpan data"}`);
+      console.error("Error:", event.data);
+    }
+  };
+  
+  window.addEventListener("message", handleMessage);
+  setTimeout(() => {
+    window.removeEventListener("message", handleMessage);
+  }, 10000);
+}
 </script>
+
+<!-- External scripts -->
+<script src="chart.js"></script>
+<script src="html2canvas.min.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script src="jspdf.plugin.autotable.min.js"></script>
+<script src="xlsx.full.min.js"></script>
 
 </body>
 </html>

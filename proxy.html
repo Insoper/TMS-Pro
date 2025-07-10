@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TMS-Pro Data Export</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .loading {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+        }
+        .success {
+            background-color: #ddffdd;
+            border-left: 6px solid #4CAF50;
+        }
+        .error {
+            background-color: #ffdddd;
+            border-left: 6px solid #f44336;
+        }
+        #details {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 12px;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h2>TMS-Pro Data Export</h2>
+    <div id="status" class="status loading">Memproses data...</div>
+    <button id="retry" onclick="retry()" style="display: none;">Coba Lagi</button>
+    <button id="showDetails" onclick="toggleDetails()" style="margin-top: 10px;">Tampilkan Detail</button>
+    <pre id="details"></pre>
+    
+    <script>
+        // URL GAS Anda (GANTI DENGAN URL DEPLOY ANDA)
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwWmEAgdqiaRAgGRlqsQycAKwr06hu8OCiiAoGVr1pxrDyLUHxeOOhjlzmTcuSFvYiMVQ/exec";
+        
+        async function forwardToGAS() {
+            const statusEl = document.getElementById('status');
+            const detailsEl = document.getElementById('details');
+            const params = new URLSearchParams(window.location.search);
+            
+            // Tampilkan parameter di console untuk debugging
+            console.log("Parameters:", Object.fromEntries(params.entries()));
+            
+            try {
+                statusEl.textContent = "Mengirim data ke Google Sheets...";
+                
+                // Kirim request ke GAS
+                const response = await fetch(`${GAS_URL}?${params.toString()}`, {
+                    redirect: "follow"
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log("Response from GAS:", result);
+                
+                if (result.success) {
+                    statusEl.className = "status success";
+                    statusEl.innerHTML = `
+                        <strong>✅ Data berhasil disimpan!</strong><br>
+                        Spreadsheet: ${result.spreadsheet}<br>
+                        Sheet: ${result.sheet}<br>
+                        Baris: ${result.row}
+                    `;
+                    
+                    detailsEl.textContent = JSON.stringify(result.data, null, 2);
+                    
+                    // Kirim pesan ke window utama
+                    window.opener.postMessage({
+                        success: true,
+                        message: "Data berhasil disimpan ke Google Sheets!",
+                        details: result
+                    }, "*");
+                    
+                    // Tutup window setelah 3 detik
+                    setTimeout(() => window.close(), 3000);
+                } else {
+                    throw new Error(result.error || "Gagal menyimpan data");
+                }
+                
+            } catch (err) {
+                console.error("Error:", err);
+                statusEl.className = "status error";
+                statusEl.innerHTML = `
+                    <strong>❌ Gagal menyimpan data</strong><br>
+                    ${err.message}
+                `;
+                
+                detailsEl.textContent = err.stack || JSON.stringify(err, null, 2);
+                
+                // Kirim pesan error ke window utama
+                window.opener.postMessage({
+                    success: false,
+                    error: err.message
+                }, "*");
+                
+                document.getElementById('retry').style.display = 'inline-block';
+            }
+        }
+        
+        function retry() {
+            window.location.reload();
+        }
+        
+        function toggleDetails() {
+            const detailsEl = document.getElementById('details');
+            detailsEl.style.display = detailsEl.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Jalankan saat halaman dimuat
+        window.onload = forwardToGAS;
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TMS Pro - Mode Offline</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 { color: #007bff; }
+    .status {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #007bff;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #0056b3; }
+    .features {
+      text-align: left;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>TMS Pro - Mode Offline</h1>
+  <div class="status">
+    <p>Anda sedang offline. Aplikasi tetap berfungsi dengan fitur terbatas.</p>
+    <p id="connection-status">Menunggu koneksi...</p>
+  </div>
+  
+  <div class="features">
+    <h3>Fitur yang Tersedia:</h3>
+    <ul>
+      <li>Melanjutkan Time Motion Study</li>
+      <li>Melihat data yang sudah tersimpan</li>
+      <li>Menggunakan semua fitur utama</li>
+    </ul>
+    <p>Data akan disinkronkan ketika koneksi kembali.</p>
+  </div>
+  
+  <button onclick="window.location.reload()">Coba Koneksi</button>
+  <button onclick="window.location.href='./index.html'">Lanjutkan Bekerja</button>
+
+  <script>
+    // Check connection status periodically
+    function checkConnection() {
+      const statusElement = document.getElementById('connection-status');
+      
+      if (navigator.onLine) {
+        statusElement.textContent = 'Koneksi tersedia!';
+        statusElement.style.color = 'green';
+        setTimeout(() => {
+          window.location.href = './index.html';
+        }, 2000);
+      } else {
+        statusElement.textContent = 'Masih offline. Bekerja dengan data lokal.';
+        statusElement.style.color = 'red';
+      }
+    }
+    
+    // Check immediately
+    checkConnection();
+    
+    // And every 5 seconds
+    setInterval(checkConnection, 5000);
+    
+    // Listen for connection changes
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', checkConnection);
+  </script>
+</body>
+</html>

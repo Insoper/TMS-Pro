@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tms-pro-cache-v2.0';
+const CACHE_NAME = 'tms-pro-cache-v2.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -12,28 +12,21 @@ const ASSETS_TO_CACHE = [
   './jspdf.plugin.autotable.min.js',
   './xlsx.full.min.js',
   './service-worker.js',
-  './proxy.html'
+  './proxy.html',
+  './offline.html'
 ];
-
-const OFFLINE_URL = './offline.html';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Caching assets');
-        return Promise.all(
-          ASSETS_TO_CACHE.map(url => {
-            return fetch(url)
-              .then(response => {
-                if (response.ok) return cache.put(url, response);
-                console.warn('Failed to cache:', url);
-              })
-              .catch(err => {
-                console.warn('Error caching:', url, err);
-              });
-          })
-        );
+        console.log('Caching assets for offline use');
+        return cache.addAll(ASSETS_TO_CACHE)
+          .catch(err => {
+            console.error('Failed to cache some assets:', err);
+            // Tetap lanjutkan meskipun ada yang gagal
+            return Promise.resolve();
+          });
       })
       .then(() => self.skipWaiting())
   );
@@ -56,41 +49,36 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
-  
-  // Handle navigation requests
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => caches.match('./index.html'))
-    );
-    return;
-  }
 
-  // For all other requests
+  // Network-first strategy with cache fallback
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Return cached response if found
-        if (cachedResponse) return cachedResponse;
-        
-        // Otherwise fetch from network
-        return fetch(event.request)
-          .then((response) => {
-            // Cache the response if it's valid
-            if (response && response.status === 200) {
-              const responseToCache = response.clone();
-              caches.open(CACHE_NAME)
-                .then(cache => cache.put(event.request, responseToCache));
-            }
-            return response;
-          })
-          .catch(() => {
-            // Return offline page for HTML requests
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match(OFFLINE_URL);
-            }
-          });
+    fetch(event.request)
+      .then((response) => {
+        // Cache the response if it's valid
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => cache.put(event.request, responseToCache));
+        }
+        return response;
+      })
+      .catch(() => {
+        // For HTML requests, return index.html for SPA routing
+        if (event.request.headers.get('accept').includes('text/html')) {
+          return caches.match('./index.html');
+        }
+        // For other requests, return from cache
+        return caches.match(event.request);
       })
   );
+});
+
+// Background sync for offline data (optional)
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-offline-data') {
+    console.log('Syncing offline data...');
+    // Implement your offline data sync logic here
+  }
 });

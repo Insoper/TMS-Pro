@@ -460,7 +460,7 @@
   <button id="btnExportPDF" onclick="exportPDF()" disabled>🧾 Export ke PDF</button>
   <button id="btnExportExcel" onclick="exportExcel()" disabled>📄 Export ke Excel</button>
   <button id="btnExportSheets" onclick="exportToGoogleSheets()" disabled>📤 Export ke Google Sheets</button>
-  <button class="nav-button" onclick="showInputAlatView()">Kembali ke Input Alat</button>
+  <button id="btnBackToInput" class="nav-button" onclick="showInputAlatView()" disabled>Kembali ke Input Awal</button>
 
   <div class="hasil" id="output"></div>
   <div class="resume" id="resume"></div>
@@ -842,6 +842,7 @@ function selesaiSession() {
   document.querySelectorAll('#operationView button').forEach(b => b.disabled = true);
   document.getElementById('btnStart').disabled = false;
   document.getElementById('btnSummary').disabled = false;
+  document.getElementById('btnBackToInput').disabled = false;
 
   // Nonaktifkan counter dan timer
   document.getElementById('btnPlus').disabled = true;
@@ -899,6 +900,7 @@ function resetSession() {
   document.getElementById("btnExportPDF").disabled = true;
   document.getElementById("btnExportExcel").disabled = true;
   document.getElementById("btnExportSheets").disabled = true;
+  document.getElementById('btnBackToInput').disabled = true;
 
   // Nonaktifkan fill factor active
   document.querySelectorAll('#fillFactors button').forEach(btn => {

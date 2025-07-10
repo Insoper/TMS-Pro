@@ -517,25 +517,44 @@ let offlineData = {
 
 // Initialize the app
 function initializeForm() {
-  // Register Service Worker
+  // 1. Set initial view - THIS FIXES THE BLANK SCREEN ISSUE
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'none';
+  console.log('Initial views configured');
+
+  // 2. Register Service Worker for offline capability
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
       .then(registration => {
         console.log('ServiceWorker registered with scope:', registration.scope);
         registration.update();
+        
+        // Check if content is cached
+        caches.match('./index.html')
+          .then(response => {
+            if (response) {
+              console.log('App is cached for offline use');
+            } else {
+              console.log('No cache found, will cache on next load');
+            }
+          });
       })
       .catch(err => {
         console.error('ServiceWorker registration failed:', err);
       });
   }
 
-  // Check offline status
+  // 3. Check offline status and setup event listeners
   checkOfflineStatus();
-  
-  // Load any saved offline data
+  window.addEventListener('online', handleNetworkChange);
+  window.addEventListener('offline', handleNetworkChange);
+  console.log('Network listeners setup');
+
+  // 4. Load any saved offline data
   loadOfflineData();
 
-  // Check for saved login
+  // 5. Check for saved login credentials
   const saved = localStorage.getItem("loginUser");
   if (saved) {
     try {
@@ -546,22 +565,25 @@ function initializeForm() {
       if (diffHours <= 24) {
         document.getElementById("username").value = user;
         document.getElementById("password").value = pass;
+        console.log('Loaded saved credentials');
       } else {
         localStorage.removeItem("loginUser");
+        console.log('Expired credentials cleared');
       }
     } catch (e) {
       console.error("Error parsing saved login", e);
     }
   }
 
-  // iOS install prompt
+  // 6. iOS install prompt
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
   const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
   if (isIOS && !isInStandaloneMode) {
     document.getElementById('iosInstallPrompt').style.display = 'block';
+    console.log('Showing iOS install prompt');
   }
 
-  // Type alat change listener
+  // 7. Setup equipment type dropdown
   document.getElementById("typeAlat").addEventListener("change", function() {
     const type = this.value;
     const bucketSelect = document.getElementById("kapasitasBucket");
@@ -592,16 +614,14 @@ function initializeForm() {
     cekForm();
   });
 
-  // Other dropdown listeners
+  // 8. Setup other dropdown listeners
   ['kapasitasBucket', 'metodeLoading', 'jenisMaterial'].forEach(id => {
     document.getElementById(id).addEventListener('change', cekForm);
   });
 
-  // Network status listeners
-  window.addEventListener('online', handleNetworkChange);
-  window.addEventListener('offline', handleNetworkChange);
-
+  // 9. Initial form check
   cekForm();
+  console.log('Form initialization complete');
 }
 
 // Offline functionality

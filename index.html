@@ -1310,19 +1310,6 @@ function exportToGoogleSheets() {
   }, 10000);
 }
 
-// Tambahkan di akhir file sebelum </body>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope:', registration.scope);
-        registration.update(); // Check for updates
-      })
-      .catch(err => {
-        console.log('ServiceWorker registration failed:', err);
-      });
-  });
-}
 </script>
   
 <script src="./chart.js"></script>

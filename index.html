@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#007bff">
   <title>TMS Pro</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon-192.png" type="image/png">
-  <script src="./chart.js"></script>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png" type="image/png">
   <style>
     /* Common styles */
     * {
@@ -52,7 +51,7 @@
       border: 1px solid #888;
       margin: 4px 0;
       width: 100%;
-      min-height: 44px; /* Better touch target */
+      min-height: 44px;
     }
     
     .button-group {
@@ -275,6 +274,29 @@
       flex: 1;
     }
     
+    /* Offline mode indicator */
+    .offline-mode {
+      position: relative;
+    }
+    
+    .offline-mode::after {
+      content: "OFFLINE";
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: red;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 1000;
+      font-weight: bold;
+    }
+    
+    .offline-mode button:not(.nav-button) {
+      opacity: 0.9;
+      border: 1px dashed #999;
+    }
+    
     /* Responsive adjustments */
     @media (min-width: 768px) {
       body {
@@ -320,7 +342,7 @@
   <div id="loginContainer">
     <div class="login-content">
       <div class="logo-container">
-        <img src="logo.png" alt="Logo" class="login-logo" />
+        <img src="./logo.png" alt="Logo" class="login-logo" />
       </div>
       <div class="login-form">
         <h2>Login</h2>
@@ -485,10 +507,34 @@ let pauseStartTime = null;
 let totalPausedTime = 0;
 let editing = false;
 
+// Offline data management
+let offlineData = {
+  logs: [],
+  truckCount: 0,
+  currentFill: 1.0,
+  lastState: null
+};
+
 // Initialize the app
 function initializeForm() {
-  showLoginView();
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => {
+        console.log('ServiceWorker registered with scope:', registration.scope);
+        registration.update();
+      })
+      .catch(err => {
+        console.error('ServiceWorker registration failed:', err);
+      });
+  }
+
+  // Check offline status
+  checkOfflineStatus();
   
+  // Load any saved offline data
+  loadOfflineData();
+
   // Check for saved login
   const saved = localStorage.getItem("loginUser");
   if (saved) {
@@ -551,8 +597,86 @@ function initializeForm() {
     document.getElementById(id).addEventListener('change', cekForm);
   });
 
+  // Network status listeners
+  window.addEventListener('online', handleNetworkChange);
+  window.addEventListener('offline', handleNetworkChange);
+
   cekForm();
 }
+
+// Offline functionality
+function checkOfflineStatus() {
+  if (!navigator.onLine) {
+    document.body.classList.add('offline-mode');
+    console.log('Aplikasi dalam mode offline');
+  } else {
+    document.body.classList.remove('offline-mode');
+  }
+}
+
+function handleNetworkChange() {
+  checkOfflineStatus();
+  if (navigator.onLine) {
+    console.log('Koneksi kembali');
+    syncOfflineData();
+  } else {
+    console.log('Kehilangan koneksi');
+    if (started) {
+      saveOfflineData();
+    }
+  }
+}
+
+function saveOfflineData() {
+  offlineData = {
+    logs: logs,
+    truckCount: truckCount,
+    currentFill: currentFill,
+    lastState: {
+      lastTime: lastTime,
+      lastLabel: lastLabel,
+      stepElapsedTime: stepElapsedTime,
+      totalPausedTime: totalPausedTime
+    }
+  };
+  localStorage.setItem('tmsOfflineData', JSON.stringify(offlineData));
+  console.log('Data disimpan untuk offline');
+}
+
+function loadOfflineData() {
+  const savedData = localStorage.getItem('tmsOfflineData');
+  if (savedData) {
+    offlineData = JSON.parse(savedData);
+    logs = offlineData.logs;
+    truckCount = offlineData.truckCount;
+    currentFill = offlineData.currentFill;
+    
+    if (offlineData.lastState) {
+      lastTime = offlineData.lastState.lastTime;
+      lastLabel = offlineData.lastState.lastLabel;
+      stepElapsedTime = offlineData.lastState.stepElapsedTime;
+      totalPausedTime = offlineData.lastState.totalPausedTime;
+    }
+    
+    document.getElementById('truckCount').innerText = truckCount;
+    console.log('Data offline dimuat');
+    
+    // Clear saved data after loading
+    localStorage.removeItem('tmsOfflineData');
+  }
+}
+
+function syncOfflineData() {
+  // Placeholder for any sync logic with server
+  console.log('Menyinkronkan data offline...');
+}
+
+// Auto-save every 30 seconds when offline
+setInterval(() => {
+  if (!navigator.onLine && started) {
+    saveOfflineData();
+  }
+}, 30000);
 
 function cekForm() {
   const filled = document.getElementById('typeAlat').value &&
@@ -1185,16 +1309,7 @@ function exportToGoogleSheets() {
     window.removeEventListener("message", handleMessage);
   }, 10000);
 }
-</script>
 
-<!-- External scripts -->
-
-<script src="html2canvas.min.js"></script>
-<script src="jspdf.umd.min.js"></script>
-<script src="jspdf.plugin.autotable.min.js"></script>
-<script src="xlsx.full.min.js"></script>
-
-<script>
 // Tambahkan di akhir file sebelum </body>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -1207,7 +1322,14 @@ if ('serviceWorker' in navigator) {
         console.log('ServiceWorker registration failed:', err);
       });
   });
-}</script>
-
+}
+</script>
+  
+<script src="./chart.js"></script>
+<script src="./html2canvas.min.js"></script>
+<script src="./jspdf.umd.min.js"></script>
+<script src="./jspdf.plugin.autotable.min.js"></script>
+<script src="./xlsx.full.min.js"></script>
+  
 </body>
 </html>

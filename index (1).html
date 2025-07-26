@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#007bff">
+  <title>TMS Wheel Loader Pro</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <style>
+    /* Common styles */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    .judul-besar {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0 20px;
+    }
+    
+    h2, h3, label {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 8px 0 5px;
+    }
+    
+    select {
+      padding: 8px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      width: 100%;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+      background-color: white;
+    }
+    
+    button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #888;
+      margin: 4px 0;
+      width: 100%;
+      min-height: 44px;
+    }
+    
+    .button-group {
+      margin: 4px 0;
+    }
+    
+    .button-group button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      min-width: auto;
+    }
+    
+    .button-group button.active {
+      background-color: #003f7f;
+    }
+    
+    .button-group button:disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+    
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    
+    .hasil, .resume {
+      background: #f9f9f9;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 8px;
+      min-width: 500px;
+    }
+    
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    
+    .charts {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .charts canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+    
+    .fill-factor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+    
+    .fill-factor-grid button {
+      background-color: #e0f0ff;
+      color: #004b7f;
+      border: 1px solid #007bff;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 10px 0;
+      transition: background-color 0.2s ease;
+      min-height: 50px;
+    }
+    
+    .fill-factor-grid button.active {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .fill-factor-grid button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    /* Login styles */
+    #loginContainer {
+      width: 100%;
+      max-width: 100%;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+    
+    .login-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .login-logo {
+      width: 100px;
+      height: auto;
+      object-fit: contain;
+    }
+    
+    .login-form {
+      width: 100%;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      min-height: 44px;
+    }
+    
+    .login-form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    /* Step timer */
+    #stepTimer {
+      display: none;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 8px 12px;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      background-color: #f0f8ff;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin: 10px 0;
+    }
+    
+    /* View navigation */
+    .view-container {
+      display: none;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 5px;
+    }
+    
+    .nav-button {
+      margin: 10px 0;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    /* iOS install prompt */
+    #iosInstallPrompt {
+      display: none;
+      padding: 12px;
+      background: #fef7d1;
+      border: 1px solid #e6c200;
+      font-size: 14px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    /* Truck counter */
+    #truckCounterContainer {
+      display: block;
+      margin: 10px 0;
+    }
+    
+    #truckCounterContainer button {
+      display: inline-block;
+      width: 50px;
+      margin: 0 5px;
+    }
+    
+    #truckCount {
+      display: inline-block;
+      min-width: 30px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    /* Button container for operation view */
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-row button {
+      flex: 1;
+    }
+    
+    /* Offline mode indicator */
+    .offline-mode {
+      position: relative;
+    }
+    
+    .offline-mode::after {
+      content: "OFFLINE";
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: red;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 1000;
+      font-weight: bold;
+    }
+    
+    .offline-mode button:not(.nav-button) {
+      opacity: 0.9;
+      border: 1px dashed #999;
+    }
+    
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      body {
+        padding: 15px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      
+      .judul-besar {
+        font-size: 36px;
+      }
+      
+      .charts {
+        flex-direction: row;
+      }
+      
+      .charts canvas {
+        width: 48% !important;
+      }
+      
+      #loginContainer {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 30px;
+      }
+      
+      .login-content {
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+      }
+      
+      .login-logo {
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+<body onload="initializeForm()">
+
+<!-- View 1: Login -->
+<div id="loginView" class="view-container">
+  <div id="loginContainer">
+    <div class="login-content">
+      <div class="logo-container">
+        <img src="./logo.png" alt="Logo" class="login-logo" />
+      </div>
+      <div class="login-form">
+        <h2>Login</h2>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" />
+        </div>
+        <div class="form-group" style="position: relative;">
+          <label for="password">Password:</label>
+          <input type="password" id="password" style="padding-right: 40px;" />
+          <span onclick="togglePassword()" style="position: absolute; right: 10px; bottom: 8px; cursor: pointer; font-size: 18px;">👁️</span>
+        </div>
+        <button onclick="checkLogin()">Login</button>
+        <p id="loginError" style="color: red;"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View 2: Input Alat -->
+<div id="inputAlatView" class="view-container">
+  <h1 class="judul-besar">TMS Wheel Loader Pro</h1>
+  
+  <label>Type Alat:</label>
+  <select id="typeAlat">
+    <option value="">-- Pilih Type Alat --</option>
+    <option value="WA800-3">WA800-3</option>
+    <option value="WA900-8">WA900-8</option>
+    <option value="WA1200-6">WA1200-6</option>
+  </select>
+
+  <label>Kapasitas Bucket (m³):</label>
+  <select id="kapasitasBucket">
+    <option value="">-- Pilih Kapasitas --</option>
+  </select>
+
+  <label>Metode Loading:</label>
+  <select id="metodeLoading">
+    <option value="">-- Pilih Metode --</option>
+    <option>V Shape</option>
+    <option>I Shape</option>
+    <option>L Shape</option>
+    <option>T Shape</option>
+  </select>
+
+  <label>Jenis Material:</label>
+  <select id="jenisMaterial">
+    <option value="">-- Pilih Material --</option>
+    <option value="0.9|0.9">Batubara (0.9 ton/m³ - LOOSE)</option>
+    <option value="0.85|1.2">Batukapur (1.2 ton/m³ - LOOSE)</option>
+    <option value="0.7|1.5">Boulder (1.5 ton/m³ - LOOSE)</option>
+    <option value="0.8|1.3">Tanah Liat (1.3 ton/m³ - LOOSE)</option>
+    <option value="0.75|1.4">Pasir dan Kerikil (1.4 ton/m³ - LOOSE)</option>
+    <option value="0.65|1.6">Batu Pecah (1.6 ton/m³ - LOOSE)</option>
+  </select>
+  
+  <button id="btnNextToOperation" class="nav-button" onclick="showOperationView()" disabled>Lanjut ke Operasi →</button>
+</div>
+
+<!-- View 3: Operation -->
+<div id="operationView" class="view-container">
+  <h1 class="judul-besar">TMS Wheel Loader Pro</h1>
+  
+  <div class="button-row">
+    <button id="btnStart" onclick="startSession()" disabled>▶️ Mulai</button>
+    <button id="btnPause" onclick="togglePause()" disabled>⏸️ Pause</button>
+    <button id="btnEdit" onclick="startEdit()" disabled>✏️ Edit</button>
+  </div>
+
+  <div id="truckCounterContainer">
+    <label><strong>Truck Counter:</strong></label><br>
+    <button onclick="updateTruckCount(-1)" id="btnMinus" disabled>-</button>
+    <span id="truckCount">0</span>
+    <button onclick="updateTruckCount(1)" id="btnPlus" disabled>+</button>
+  </div>
+
+  <div id="stepTimer">
+    ⏱️ <span id="stepTimerValue">0.0</span> detik
+  </div>
+
+  <h3>Bucket Fill Factor:</h3>
+  <div class="fill-factor-grid" id="fillFactors">
+    <button onclick="setFill(this, 0.7)" disabled>0.7</button>
+    <button onclick="setFill(this, 0.8)" disabled>0.8</button>
+    <button onclick="setFill(this, 0.9)" disabled>0.9</button>
+    <button onclick="setFill(this, 1.0)" class="active" disabled>1.0</button>
+    <button onclick="setFill(this, 1.1)" disabled>1.1</button>
+    <button onclick="setFill(this, 1.2)" disabled>1.2</button>
+  </div>
+
+  <h3>Primary Work:</h3>
+  <div class="button-group grid-2col" id="primaryButtons">
+    <button onclick="addStep(this, 'Primary Work', 'Digging')" disabled>Digging →</button>
+    <button onclick="addStep(this, 'Primary Work', 'Reverse Loaded')" disabled>Reverse Loaded ↓</button>
+    <button onclick="addStep(this, 'Primary Work', 'Forward Empty')" disabled>Forward Empty ↑</button>
+    <button onclick="addStep(this, 'Primary Work', 'Forward Loaded')" disabled>Forward Loaded ↓</button>
+    <button onclick="addStep(this, 'Primary Work', 'Reverse Empty')" disabled>Reverse Empty ↑</button>
+    <button onclick="addStep(this, 'Primary Work', 'Dumping')" disabled>Dumping ←</button>  
+</div>
+
+  <h3>Secondary Work:</h3>
+  <div class="button-group grid-2col" id="secondaryButtons">
+    <button onclick="addStep(this, 'Secondary Work', 'Dig to Prepare')" disabled>Dig to Prepare</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Wait to Dump')" disabled>Wait to Dump</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Push Material on Vessel')" disabled>Push Material on Vessel</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Travel')" disabled>Travel</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Idle')" disabled>Idle</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Cleaning')" disabled>Cleaning</button>
+    <button onclick="addStep(this, 'Secondary Work', 'Others')" disabled>Others</button>
+  </div>
+
+  <button id="btnSelesai" onclick="selesaiSession()" disabled>✅ Selesai</button>
+  <button id="btnSummary" onclick="hitungProduksi()" disabled>📊 Summary</button>
+  <button id="btnExportPDF" onclick="exportPDF()" disabled>🧾 Export ke PDF</button>
+  <button id="btnExportExcel" onclick="exportExcel()" disabled>📄 Export ke Excel</button>
+  <button id="btnBackToInput" class="nav-button" onclick="showInputAlatView()" disabled>Kembali ke Input Awal</button>
+
+  <div class="hasil" id="output"></div>
+  <div class="resume" id="resume"></div>
+  <div class="charts">
+    <canvas id="pieChart"></canvas>
+    <canvas id="barChart"></canvas>
+  </div>
+</div>
+
+<!-- iOS install prompt -->
+<div id="iosInstallPrompt">
+  📱 Untuk menginstal aplikasi ini di iPhone, tap tombol <strong>Bagikan</strong> (ikon ⬆️ di bawah), lalu pilih <strong>Tambahkan ke Layar Utama</strong>.
+</div>
+
+<script>
+// View management functions
+function showLoginView() {
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'none';
+}
+
+function showInputAlatView() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('inputAlatView').style.display = 'block';
+  document.getElementById('operationView').style.display = 'none';
+}
+
+function showOperationView() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'block';
+}
+
+// Application variables
+let logs = [], currentFill = 1.0, started = false, lastTime = null, lastLabel = null;
+let stepTimerInterval = null;
+let stepStartTime = null;
+let truckCount = 0;
+let paused = false;
+let correctionIndex = 0;
+let stepElapsedTime = 0;
+let pauseStartTime = null;
+let totalPausedTime = 0;
+let editing = false;
+
+// Offline data management
+let offlineData = {
+  logs: [],
+  truckCount: 0,
+  currentFill: 1.0,
+  lastState: null
+};
+
+// Initialize the app
+function initializeForm() {
+  // 1. Set initial view - THIS FIXES THE BLANK SCREEN ISSUE
+  document.getElementById('loginView').style.display = 'block';
+  document.getElementById('inputAlatView').style.display = 'none';
+  document.getElementById('operationView').style.display = 'none';
+  console.log('Initial views configured');
+
+  // 2. Register Service Worker for offline capability
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(registration => {
+        console.log('ServiceWorker registered with scope:', registration.scope);
+        registration.update();
+        
+        // Check if content is cached
+        caches.match('./index.html')
+          .then(response => {
+            if (response) {
+              console.log('App is cached for offline use');
+            } else {
+              console.log('No cache found, will cache on next load');
+            }
+          });
+      })
+      .catch(err => {
+        console.error('ServiceWorker registration failed:', err);
+      });
+  }
+
+  // 3. Check offline status and setup event listeners
+  checkOfflineStatus();
+  window.addEventListener('online', handleNetworkChange);
+  window.addEventListener('offline', handleNetworkChange);
+  console.log('Network listeners setup');
+
+  // 4. Load any saved offline data
+  loadOfflineData();
+
+  // 5. Check for saved login credentials
+  const saved = localStorage.getItem("loginUser");
+  if (saved) {
+    try {
+      const { user, pass, time } = JSON.parse(saved);
+      const now = Date.now();
+      const diffHours = (now - time) / (1000 * 60 * 60);
+
+      if (diffHours <= 24) {
+        document.getElementById("username").value = user;
+        document.getElementById("password").value = pass;
+        console.log('Loaded saved credentials');
+      } else {
+        localStorage.removeItem("loginUser");
+        console.log('Expired credentials cleared');
+      }
+    } catch (e) {
+      console.error("Error parsing saved login", e);
+    }
+  }
+
+  // 6. iOS install prompt
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+  const isInStandaloneMode = ('standalone' in window.navigator) && window.navigator.standalone;
+  if (isIOS && !isInStandaloneMode) {
+    document.getElementById('iosInstallPrompt').style.display = 'block';
+    console.log('Showing iOS install prompt');
+  }
+
+  // 7. Setup equipment type dropdown
+  document.getElementById("typeAlat").addEventListener("change", function() {
+    const type = this.value;
+    const bucketSelect = document.getElementById("kapasitasBucket");
+    bucketSelect.innerHTML = '<option value="">-- Pilih Kapasitas --</option>';
+
+    let options = [];
+    if (type === "WA800-3") {
+      options = [18];
+    } else if (type === "WA900-8") {
+      options = [24];
+    } else if (type === "WA1200-6") {
+      options = [37.5];
+    }
+
+    if (options.length > 0) {
+      options.forEach(val => {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val.toString().replace(".", ",");
+        bucketSelect.appendChild(opt);
+      });
+    } else {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "-- Isi Manual --";
+      bucketSelect.appendChild(opt);
+    }
+    cekForm();
+  });
+
+  // 8. Setup other dropdown listeners
+  ['kapasitasBucket', 'metodeLoading', 'jenisMaterial'].forEach(id => {
+    document.getElementById(id).addEventListener('change', cekForm);
+  });
+
+  // 9. Initial form check
+  cekForm();
+  console.log('Form initialization complete');
+}
+
+// Offline functionality
+function checkOfflineStatus() {
+  if (!navigator.onLine) {
+    document.body.classList.add('offline-mode');
+    console.log('Aplikasi dalam mode offline');
+  } else {
+    document.body.classList.remove('offline-mode');
+  }
+}
+
+function handleNetworkChange() {
+  checkOfflineStatus();
+  if (navigator.onLine) {
+    console.log('Koneksi kembali');
+    syncOfflineData();
+  } else {
+    console.log('Kehilangan koneksi');
+    if (started) {
+      saveOfflineData();
+    }
+  }
+}
+
+function saveOfflineData() {
+  offlineData = {
+    logs: logs,
+    truckCount: truckCount,
+    currentFill: currentFill,
+    lastState: {
+      lastTime: lastTime,
+      lastLabel: lastLabel,
+      stepElapsedTime: stepElapsedTime,
+      totalPausedTime: totalPausedTime
+    }
+  };
+  localStorage.setItem('tmsOfflineData', JSON.stringify(offlineData));
+  console.log('Data disimpan untuk offline');
+}
+
+function loadOfflineData() {
+  const savedData = localStorage.getItem('tmsOfflineData');
+  if (savedData) {
+    offlineData = JSON.parse(savedData);
+    logs = offlineData.logs;
+    truckCount = offlineData.truckCount;
+    currentFill = offlineData.currentFill;
+    
+    if (offlineData.lastState) {
+      lastTime = offlineData.lastState.lastTime;
+      lastLabel = offlineData.lastState.lastLabel;
+      stepElapsedTime = offlineData.lastState.stepElapsedTime;
+      totalPausedTime = offlineData.lastState.totalPausedTime;
+    }
+    
+    document.getElementById('truckCount').innerText = truckCount;
+    console.log('Data offline dimuat');
+    
+    // Clear saved data after loading
+    localStorage.removeItem('tmsOfflineData');
+  }
+}
+
+function syncOfflineData() {
+  // Placeholder for any sync logic with server
+  console.log('Menyinkronkan data offline...');
+}
+
+// Auto-save every 30 seconds when offline
+setInterval(() => {
+  if (!navigator.onLine && started) {
+    saveOfflineData();
+  }
+}, 30000);
+
+function cekForm() {
+  const filled = document.getElementById('typeAlat').value &&
+               document.getElementById('kapasitasBucket').value &&
+               document.getElementById('metodeLoading').value &&
+               document.getElementById('jenisMaterial').value;
+  document.getElementById('btnStart').disabled = !filled;
+  document.getElementById('btnNextToOperation').disabled = !filled;
+}
+
+function checkLogin() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  
+  if (user === 'Insoper_UT' && pass === 'dediKASI') {
+    const now = new Date().getTime();
+    localStorage.setItem("loginUser", JSON.stringify({ user, pass, time: now }));
+    showInputAlatView();
+  } else {
+    document.getElementById('loginError').innerText = 'Username atau password salah';
+  }
+}
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+function setFill(btn, val) {
+  if (!started) return;
+  currentFill = val;
+  document.querySelectorAll('#fillFactors button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function startSession() {
+  started = true;
+  lastTime = null;
+  lastLabel = null;
+  logs = [];
+  truckCount = 0;
+  document.getElementById('truckCount').innerText = truckCount;
+
+  document.querySelectorAll('#operationView button').forEach(btn => {
+    if (btn.id !== 'btnStart') btn.disabled = true;
+  });
+
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('btnEdit').disabled = true;
+  document.getElementById('btnPause').disabled = true;
+
+  // Aktifkan counter
+  document.getElementById('truckCounterContainer').style.display = 'block';
+  document.getElementById('btnPlus').disabled = false;
+  document.getElementById('btnMinus').disabled = false;
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = false);
+  correctionIndex = 0;
+}
+
+function addStep(btn, category, item) {
+  if (!started) return;
+
+  document.getElementById("btnPause").disabled = false;
+
+  if (editing) {
+    lastLabel = { category, item };
+    editing = false;
+
+    // Nonaktifkan lagi tombol pilihan
+    document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = true);
+
+    alert(`Langkah telah diperbaiki menjadi: ${item}`);
+    return;
+  }
+
+  const now = Date.now();
+
+  if (lastTime !== null) {
+    // Pastikan totalPausedTime sudah terupdate jika sedang pause sebelumnya
+    if (paused && pauseStartTime) {
+      totalPausedTime += (now - pauseStartTime);
+      pauseStartTime = null;
+    }
+
+    // Hitung durasi AKTIF saja (tidak termasuk waktu pause)
+    const durasiAktif = ((now - lastTime) - totalPausedTime) / 1000;
+
+    logs.push({
+      category: lastLabel.category,
+      item: lastLabel.item,
+      durasi: durasiAktif,
+      fillFactor: currentFill
+    });
+  }
+
+  // Siapkan langkah baru
+  lastTime = now;
+  lastLabel = { category, item };
+
+  // Reset untuk langkah berikutnya
+  stepElapsedTime = 0;
+  pauseStartTime = null;
+  totalPausedTime = 0;
+
+  resetStepTimer();
+
+  // Reset tampilan tombol
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const fillButtons = document.querySelectorAll('#fillFactors button');
+  if (item === 'Digging' || item === 'Reverse Loaded' || item === 'Forward Loaded') {
+    fillButtons.forEach(b => b.disabled = false);
+  } else {
+    fillButtons.forEach(b => b.disabled = true);
+  }
+}
+
+function selesaiSession() {
+  if (!started || lastTime === null || lastLabel === null) return;
+  const now = Date.now();
+
+  // Jika masih dalam kondisi pause, hitung totalPausedTime terakhir
+  if (paused && pauseStartTime) {
+    totalPausedTime += (now - pauseStartTime);
+    pauseStartTime = null;
+  }
+
+  // Hitung durasi AKTIF saja (tidak termasuk waktu pause)
+  const durasiAktif = ((now - lastTime) - totalPausedTime) / 1000;
+
+  logs.push({
+    category: lastLabel.category,
+    item: lastLabel.item,
+    durasi: durasiAktif,
+    fillFactor: currentFill
+  });
+
+  started = false;
+  lastTime = null;
+  lastLabel = null;
+
+  document.querySelectorAll('#operationView button').forEach(b => b.disabled = true);
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnSummary').disabled = false;
+  document.getElementById('btnBackToInput').disabled = false;
+
+  // Nonaktifkan counter dan timer
+  document.getElementById('btnPlus').disabled = true;
+  document.getElementById('btnMinus').disabled = true;
+  document.getElementById('truckCounterContainer').style.display = 'none';
+  clearInterval(stepTimerInterval);
+  document.getElementById('stepTimer').style.display = 'none';
+
+  // Nonaktifkan tombol pause
+  paused = false;
+  document.getElementById("btnPause").disabled = true;
+  document.getElementById("btnPause").innerText = "⏸️ Pause";
+
+  const btnStart = document.getElementById('btnStart');
+  btnStart.innerText = "🔄 Reset";
+  btnStart.onclick = resetSession;
+}
+
+function resetSession() {
+  // Reset variabel
+  logs = [];
+  currentFill = 1.0;
+  started = false;
+  lastTime = null;
+  lastLabel = null;
+  truckCount = 0;
+  correctionIndex = 0;
+  editing = false;
+
+  stepElapsedTime = 0;
+  pauseStartTime = null;
+  totalPausedTime = 0;
+
+  // Kosongkan tampilan
+  document.getElementById('output').innerHTML = '';
+  document.getElementById('resume').innerHTML = '';
+
+  // Reset grafik
+  const pieChartCanvas = document.getElementById("pieChart");
+  const barChartCanvas = document.getElementById("barChart");
+  if (pieChartCanvas && pieChartCanvas.chart) pieChartCanvas.chart.destroy();
+  if (barChartCanvas && barChartCanvas.chart) barChartCanvas.chart.destroy();
+
+  // Reset tombol mulai
+  const btnStart = document.getElementById('btnStart');
+  btnStart.innerText = "▶️ Mulai";
+  btnStart.onclick = startSession;
+  btnStart.disabled = true;
+
+  // Reset timer
+  document.getElementById('stepTimerValue').innerText = "0.0";
+  document.getElementById('stepTimer').style.display = "none";
+
+  // Nonaktifkan export
+  document.getElementById("btnExportPDF").disabled = true;
+  document.getElementById("btnExportExcel").disabled = true;
+  document.getElementById('btnBackToInput').disabled = true;
+
+  // Nonaktifkan fill factor active
+  document.querySelectorAll('#fillFactors button').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.innerText === "1.0") btn.classList.add('active');
+  });
+
+  // Cek form lagi
+  cekForm();
+}
+
+function updateTruckCount(delta) {
+  if (!started) return;
+  truckCount += delta;
+  if (truckCount < 0) truckCount = 0;
+  document.getElementById('truckCount').innerText = truckCount;
+}
+
+function resetStepTimer() {
+  clearInterval(stepTimerInterval);
+  stepStartTime = Date.now();
+  document.getElementById('stepTimer').style.display = 'block';
+
+  stepTimerInterval = setInterval(() => {
+    const now = Date.now();
+    const elapsed = ((now - stepStartTime) / 1000) + stepElapsedTime;
+    document.getElementById('stepTimerValue').innerText = elapsed.toFixed(1);
+  }, 100);
+}
+
+function togglePause() {
+  // Only allow pausing if a work step has been selected
+  if (!paused && (!lastLabel || !lastTime)) {
+    alert("Silakan pilih langkah kerja terlebih dahulu sebelum pause");
+    return;
+  }
+
+  // Toggle pause state
+  paused = !paused;
+  
+  // Update button text
+  document.getElementById("btnPause").innerText = paused ? "▶️ Resume" : "⏸️ Pause";
+  
+  // Enable/disable edit button
+  document.getElementById("btnEdit").disabled = !paused;
+
+  // Get all relevant buttons
+  const primaryButtons = document.querySelectorAll('#primaryButtons button');
+  const secondaryButtons = document.querySelectorAll('#secondaryButtons button');
+  const fillFactorButtons = document.querySelectorAll('#fillFactors button');
+
+  if (paused) {
+    // When pausing:
+    // Disable all work buttons
+    primaryButtons.forEach(btn => btn.disabled = true);
+    secondaryButtons.forEach(btn => btn.disabled = true);
+    fillFactorButtons.forEach(btn => btn.disabled = true);
+    
+    // Enable finish button
+    document.getElementById('btnSelesai').disabled = false;
+
+    // Record pause start time
+    pauseStartTime = Date.now();
+    
+    // Stop the timer
+    clearInterval(stepTimerInterval);
+    
+    // Calculate elapsed time
+    const now = Date.now();
+    stepElapsedTime += (now - stepStartTime) / 1000;
+    
+    // Update timer display
+    document.getElementById('stepTimer').style.display = 'block';
+    document.getElementById('stepTimerValue').innerText = stepElapsedTime.toFixed(1);
+  } else {
+    // When resuming:
+    // Calculate total paused time
+    if (pauseStartTime) {
+      totalPausedTime += (Date.now() - pauseStartTime);
+      pauseStartTime = null;
+    }
+
+    if (started) {
+      // Re-enable appropriate buttons
+      primaryButtons.forEach(btn => btn.disabled = false);
+      secondaryButtons.forEach(btn => btn.disabled = false);
+      
+      // Only enable fill factor buttons for specific steps
+      if (lastLabel && (lastLabel.item === "Digging" || lastLabel.item === "Reverse Loaded" || lastLabel.item === "Forward Loaded")) {
+        fillFactorButtons.forEach(btn => btn.disabled = false);
+      }
+    }
+    
+    // Restart the timer
+    resetStepTimer();
+    
+    // Disable finish button during operation
+    document.getElementById('btnSelesai').disabled = true;
+  }
+}
+
+function startEdit() {
+  if (!paused || !lastLabel) return;
+
+  editing = true;
+  document.querySelectorAll('#primaryButtons button, #secondaryButtons button').forEach(b => b.disabled = false);
+  alert("Silakan pilih langkah baru untuk mengganti langkah aktif sebelumnya.");
+}
+
+function hitungProduksi() {
+  if (logs.length === 0) {
+    alert("Belum ada data aktivitas yang dicatat.");
+    return;
+  }
+  
+  const typeAlat = document.getElementById("typeAlat").value;
+  const kapasitas = document.getElementById("kapasitasBucket").value;
+  const metode = document.getElementById("metodeLoading").value;
+  
+  // Parse material data (swellFactor|density)
+  const materialData = document.getElementById("jenisMaterial").value.split("|");
+  const swellFactor = parseFloat(materialData[0]) || 1;
+  const density = parseFloat(materialData[1]) || 1;
+
+  const bucket = parseFloat(kapasitas) || 1;
+  const primary = logs.filter(l => l.category === 'Primary Work');
+  const secondary = logs.filter(l => l.category === 'Secondary Work');
+  const totalPrimary = primary.reduce((a,b) => a + b.durasi, 0);
+  const totalSecondary = secondary.reduce((a,b) => a + b.durasi, 0);
+  const dumpCount = primary.filter(l => l.item.toLowerCase().includes("dump")).length;
+  const avgCycleTime = dumpCount > 0 ? totalPrimary / dumpCount : 0;
+  const efficiency = totalPrimary / (totalPrimary + totalSecondary);
+  const avgFill = logs.reduce((a,b)=>a+b.fillFactor,0) / logs.length;
+  
+  // Calculate productivity in ton/hour
+  const produksiTon = (bucket * avgFill * 3600 * efficiency * swellFactor * density) / (avgCycleTime || 1);
+
+  const digging = primary.filter(l => l.item === "Digging");
+  const reverseLoaded = primary.filter(l => l.item === "Reverse Loaded");
+  const forwardLoaded = primary.filter(l => l.item === "Forward Loaded");
+  const dumping = primary.filter(l => l.item === "Dumping");
+  const reverseEmpty = primary.filter(l => l.item === "Reverse Empty");
+  const forwardEmpty = primary.filter(l => l.item === "Forward Empty");
+
+  const avg = arr => arr.length > 0 ? arr.reduce((a,b)=>a+b.durasi,0)/arr.length : 0;
+  const suggestions = [];
+  if (efficiency < 0.85) suggestions.push("⚠️ Primary work < 85%. Tingkatkan efisiensi penggalian, kurangi secondary time.");
+  if (avg(digging) > 10) suggestions.push("⚠️ Digging > 10 detik. Optimalkan kinerja digging, sesuaikan sudut bucket saat penggalian.");
+  if (avg(reverseLoaded) > 8 || avg(forwardLoaded) > 8) suggestions.push("⚠️ Travel Loaded > 8 detik. Perbaiki jarak tempuh atau kondisi jalan.");
+  if (avg(dumping) > 6) suggestions.push("⚠️ Dumping > 6 detik. Perbaiki posisi dump truck atau ketinggian dumping.");
+  if (avg(reverseEmpty) > 8 || avg(forwardEmpty) > 8) suggestions.push("⚠️ Travel Empty > 8 detik. Perbaiki jarak tempuh atau kondisi jalan.");
+
+  document.getElementById("output").innerHTML = `
+    <p><strong>Type Alat:</strong> ${typeAlat}</p>
+    <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
+    <p><strong>Metode Loading:</strong> ${metode}</p>    
+    <p><strong>Jenis Material:</strong> ${document.getElementById("jenisMaterial").selectedOptions[0].text}</p>
+    <p><strong>Swell Factor:</strong> ${swellFactor}</p>
+    <p><strong>Density Material (LOOSE):</strong> ${density} ton/m³</p>
+    <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
+    <hr>
+    <p><strong>Total Duration:</strong> ${(totalPrimary + totalSecondary).toFixed(2)} s</p>
+    <p><strong>Average Cycle Time/Pass:</strong> ${avgCycleTime.toFixed(2)} s</p>
+    <p><strong>Primary Times:</strong> ${totalPrimary.toFixed(2)} s</p>
+    <p><strong>Average Primary Times:</strong> ${(totalPrimary / (primary.length || 1)).toFixed(2)} s</p>
+    <p><strong>Secondary Times:</strong> ${totalSecondary.toFixed(2)} s</p>
+    <p><strong>Average Secondary Times:</strong> ${(totalSecondary / (secondary.length || 1)).toFixed(2)} s</p>
+    <p><strong>Work Efficiency:</strong> ${(efficiency * 100).toFixed(2)}%</p>
+    <p><strong>Average Bucket Fill Factor:</strong> ${avgFill.toFixed(2)}</p>
+    <p><strong>Total Bucket Pass (Dump Count):</strong> ${dumpCount}</p>
+    <p><strong>Productivity:</strong> ${produksiTon.toFixed(2)} ton/jam</p>
+  `;
+
+  document.getElementById("btnExportPDF").disabled = false;
+  document.getElementById("btnExportExcel").disabled = false;
+  document.getElementById("resume").innerHTML = `
+    <h3>Resume Pengoperasian:</h3>
+    <ul>${suggestions.map(s => `<li>${s}</li>`).join('')}</ul>
+    <h3>Summary Langkah:</h3>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Item</th><th>Durasi (s)</th><th>Bucket Fill Factor</th></tr>
+      </thead>
+      <tbody>
+        ${logs.map(l => `<tr><td>${l.category}</td><td>${l.item}</td><td>${l.durasi.toFixed(2)}</td><td>${l.fillFactor}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+
+  // Create pie chart
+  const pieChartCanvas = document.getElementById("pieChart");
+  window.pieChart = new Chart(pieChartCanvas, {
+    type: 'pie',
+    data: {
+      labels: ["Primary Work", "Secondary Work"],
+      datasets: [{
+        data: [totalPrimary, totalSecondary],
+        backgroundColor: ["#007bff", "#ffc107"]
+      }]
+    }
+  });
+  pieChartCanvas.chart = window.pieChart;
+
+  // Create bar chart
+  const primaryItems = [...new Set(primary.map(p => p.item))];
+  const avgDurasi = primaryItems.map(item => {
+    const steps = primary.filter(p => p.item === item);
+    return steps.reduce((a,b)=>a+b.durasi,0)/steps.length;
+  });
+
+  const barChartCanvas = document.getElementById("barChart");
+  window.barChart = new Chart(barChartCanvas, {
+    type: 'bar',
+    data: {
+      labels: primaryItems,
+      datasets: [{
+        label: "Rata-rata Durasi (detik)",
+        data: avgDurasi,
+        backgroundColor: "#28a745"
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+  barChartCanvas.chart = window.barChart;
+}
+
+async function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  await new Promise(resolve => setTimeout(resolve, 500));
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const margin = 50;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  let y = margin;
+
+  pdf.setFontSize(16);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Laporan Produktivitas Wheel Loader", pageWidth / 2, y, { align: "center" });
+  y += 24;
+
+  const output = document.getElementById("output").innerText.trim().split("\n");
+  pdf.setFontSize(11);
+  pdf.setFont("helvetica", "normal");
+  output.forEach(line => {
+    pdf.text(line, margin, y);
+    y += 14;
+  });
+
+  y += 10;
+
+  const pieCanvas = document.getElementById("pieChart");
+  const barCanvas = document.getElementById("barChart");
+
+  const chartContainer = document.createElement('div');
+  chartContainer.style.position = "fixed";
+  chartContainer.style.top = "-9999px";
+  chartContainer.style.left = "-9999px";
+  chartContainer.style.width = "800px";
+  chartContainer.style.padding = "20px";
+  chartContainer.style.background = "white";
+  chartContainer.style.display = "flex";
+  chartContainer.style.flexWrap = "wrap";
+  chartContainer.style.justifyContent = "space-between";
+  chartContainer.style.gap = "20px";
+  chartContainer.style.zIndex = "-1";
+
+  const pieImgEl = document.createElement("img");
+  pieImgEl.src = pieCanvas.toDataURL("image/png");
+  pieImgEl.style.width = "48%";
+
+  const barImgEl = document.createElement("img");
+  barImgEl.src = barCanvas.toDataURL("image/png");
+  barImgEl.style.width = "48%";
+
+  chartContainer.appendChild(pieImgEl);
+  chartContainer.appendChild(barImgEl);
+  document.body.appendChild(chartContainer);
+
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  const canvasChart = await html2canvas(chartContainer, {
+    scale: 2,
+    scrollY: 0,
+    windowWidth: chartContainer.scrollWidth,
+    useCORS: true
+  });
+
+  const chartImg = canvasChart.toDataURL("image/png");
+  const chartImgHeight = (canvasChart.height * (pageWidth - 2 * margin)) / canvasChart.width;
+
+  if (y + chartImgHeight > pageHeight - margin) {
+    pdf.addPage();
+    y = margin;
+  }
+
+  pdf.addImage(chartImg, "PNG", margin, y, pageWidth - 2 * margin, chartImgHeight);
+  y += chartImgHeight + 20;
+
+  chartContainer.remove();
+
+  // Add suggestions
+  const resumeHTML = document.getElementById("resume").innerHTML;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(resumeHTML, "text/html");
+  const lis = doc.querySelectorAll("ul li");
+
+  if (lis.length > 0) {
+    if (y + 20 > pageHeight - margin) {
+      pdf.addPage();
+      y = margin;
+    }
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.text("Saran:", margin, y);
+    y += 18;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+
+    lis.forEach(li => {
+      let bulletText = li.textContent.trim();
+      bulletText = bulletText.replace(/[^a-zA-Z0-9\s.,%<>=:/()-]/g, "");
+
+      const safeWidth = pageWidth - 2 * margin - 10;
+      const wrapped = pdf.splitTextToSize("• " + bulletText, safeWidth);
+
+      wrapped.forEach(line => {
+        if (y > pageHeight - margin - 12) {
+          pdf.addPage();
+          y = margin;
+        }
+        pdf.text(line, margin + 10, y);
+        y += 12;
+      });
+    });
+  }
+
+  // Add table
+  const table = document.querySelector("#resume table");
+  if (table) {
+    pdf.addPage();
+    pdf.autoTable({
+      startY: margin,
+      html: table,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 123, 255] }
+    });
+  }
+
+  pdf.save("TMS_WheelLoader_Report.pdf");
+}
+
+function exportExcel() {
+  const table = document.querySelector("#resume table");
+  if (!table) return alert("Tidak ada data untuk diekspor.");
+
+  const output = document.getElementById("output").innerText.trim().split("\n");
+
+  // Ambil data ringkasan
+  const ringkasan = output.map(line => {
+    const idx = line.indexOf(":");
+    if (idx === -1) return [line.trim(), ""];
+    const key = line.substring(0, idx).trim();
+    const value = line.substring(idx + 1).trim();
+    return [key, value];
+  });
+
+  // Ambil data langkah operasi
+  const rows = Array.from(table.rows).map((row, i) =>
+    Array.from(row.cells).map((cell, j) => {
+      const text = cell.innerText.trim().replace(",", ".");
+      return i === 0 || isNaN(text) ? cell.innerText : parseFloat(text);
+    })
+  );
+
+  // Gabungkan semua data
+  const allData = [
+    ["RINGKASAN PRODUKTIVITAS", ""],
+    ...ringkasan,
+    [],
+    ["DETAIL LANGKAH OPERASI"],
+    ...rows
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(allData);
+  ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+  XLSX.writeFile(wb, "TMS_WheelLoader_Report.xlsx");
+}
+
+</script>
+  
+<script src="./chart.js"></script>
+<script src="./html2canvas.min.js"></script>
+<script src="./jspdf.umd.min.js"></script>
+<script src="./jspdf.plugin.autotable.min.js"></script>
+<script src="./xlsx.full.min.js"></script>
+  
+</body>
+</html>

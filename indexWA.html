@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#007bff">
   <title>TMS Wheel Loader Pro</title>
-  <link rel="manifest" href="./manifestWA.json">
-  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./iconWA-192.png" type="image/png">
   <style>
     /* Common styles */
     * {
@@ -348,7 +348,7 @@
   <div id="loginContainer">
     <div class="login-content">
       <div class="logo-container">
-        <img src="./logo.png" alt="Logo" class="login-logo" />
+        <img src="./logoWA.png" alt="Logo" class="login-logo" />
       </div>
       <div class="login-form">
         <h2>Login</h2>
@@ -397,12 +397,12 @@
   <label>Jenis Material:</label>
   <select id="jenisMaterial">
     <option value="">-- Pilih Material --</option>
-    <option value="0.9|0.9">Batubara (0.9 ton/m³ - LOOSE)</option>
-    <option value="0.85|1.2">Batukapur (1.2 ton/m³ - LOOSE)</option>
-    <option value="0.7|1.5">Boulder (1.5 ton/m³ - LOOSE)</option>
-    <option value="0.8|1.3">Tanah Liat (1.3 ton/m³ - LOOSE)</option>
-    <option value="0.75|1.4">Pasir dan Kerikil (1.4 ton/m³ - LOOSE)</option>
-    <option value="0.65|1.6">Batu Pecah (1.6 ton/m³ - LOOSE)</option>
+    <option value="0.9|0.9">Batubara (0.9 ton/m³)</option>
+    <option value="0.85|1.2">Batukapur (1.2 ton/m³)</option>
+    <option value="0.7|1.5">Boulder (1.5 ton/m³)</option>
+    <option value="0.8|1.3">Tanah Liat (1.3 ton/m³)</option>
+    <option value="0.75|1.4">Pasir dan Kerikil (1.4 ton/m³)</option>
+    <option value="0.65|1.6">Batu Pecah (1.6 ton/m³)</option>
   </select>
   
   <button id="btnNextToOperation" class="nav-button" onclick="showOperationView()" disabled>Lanjut ke Operasi →</button>
@@ -1039,7 +1039,7 @@ function hitungProduksi() {
   const avgFill = logs.reduce((a,b)=>a+b.fillFactor,0) / logs.length;
   
   // Calculate productivity in ton/hour
-  const produksiTon = (bucket * avgFill * 3600 * efficiency * swellFactor * density) / (avgCycleTime || 1);
+  const produksiTon = (bucket * avgFill * 3600 * efficiency * density) / (avgCycleTime || 1);
 
   const digging = primary.filter(l => l.item === "Digging");
   const reverseLoaded = primary.filter(l => l.item === "Reverse Loaded");
@@ -1061,7 +1061,6 @@ function hitungProduksi() {
     <p><strong>Kapasitas Bucket:</strong> ${kapasitas} m³</p>
     <p><strong>Metode Loading:</strong> ${metode}</p>    
     <p><strong>Jenis Material:</strong> ${document.getElementById("jenisMaterial").selectedOptions[0].text}</p>
-    <p><strong>Swell Factor:</strong> ${swellFactor}</p>
     <p><strong>Density Material (LOOSE):</strong> ${density} ton/m³</p>
     <p><strong>Jumlah Truck:</strong> ${truckCount}</p>
     <hr>
